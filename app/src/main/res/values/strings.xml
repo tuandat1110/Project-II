@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Project II</string>
+    <string name="new_user_text"><b>Are you new user?</b> Register</string>
+
+</resources>
