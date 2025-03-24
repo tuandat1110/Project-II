@@ -5,6 +5,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.ListView
+import android.widget.Toast
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -55,5 +58,37 @@ class home : Fragment() {
                     putString(ARG_PARAM2, param2)
                 }
             }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+//        val btnClick = view.findViewById<Button>(R.id.btn)
+//        btnClick.setOnClickListener {
+//            Toast.makeText(requireContext(), "Button Clicked!", Toast.LENGTH_SHORT).show()
+//        }
+
+        val lightListView = view.findViewById<ListView>(R.id.listView)
+
+        // Danh sách các đèn
+        val lightItems = listOf(
+            LightItem("Kitchen", false, 80, "OFF"),
+            LightItem("Living Room", false, 40, "OFF"),
+            LightItem("Bedroom", false, 60, "OFF"),
+            LightItem("Garage", false, 70, "OFF"),
+            LightItem("Bathroom", false, 50, "OFF"),
+            LightItem("Hallway", false, 30, "OFF"),
+            LightItem("Garden", false, 90, "OFF"),
+            LightItem("Balcony", false, 20, "OFF"),
+            LightItem("Office", false, 75, "OFF"),
+            LightItem("Guest Room", false, 55, "OFF"),
+            LightItem("Dining Room", false, 65, "OFF"),
+            LightItem("Laundry Room", false, 35, "OFF"),
+            LightItem("Storage Room", false, 45, "OFF"),
+        )
+
+        // Kết nối ListView với Adapter
+        val adapter = LightAdapter(requireContext(), lightItems) //  Sửa lỗi: `this` -> `requireContext()`
+        lightListView.adapter = adapter
     }
 }
