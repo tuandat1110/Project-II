@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Project II</string>
     <string name="new_user_text"><b>Are you new user?</b> Register</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>
