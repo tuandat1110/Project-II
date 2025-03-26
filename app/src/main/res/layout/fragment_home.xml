@@ -11,19 +11,37 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingTop="10dp">
 
         <TextView
+            android:drawableLeft="@drawable/home_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="HOME"
             android:textStyle="bold"
             android:textSize="30sp" />
+
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_width="wrap_content"
+            android:layout_height="34dp"
+            android:layout_marginRight="12dp"
+            android:background="@drawable/button_border1"
+            android:text="Add"
+            android:layout_marginBottom="20dp"
+            android:textColor="#FFFFFF" />
+
     </LinearLayout>
 
     <ListView
         android:id="@+id/listView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        />
 
 </LinearLayout>
