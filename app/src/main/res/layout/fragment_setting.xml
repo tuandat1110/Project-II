@@ -8,7 +8,6 @@
     android:padding="20dp"
     tools:context=".setting">
 
-
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -62,7 +61,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Chọn đèn"
+                    android:text="Select the light"
                     android:textColor="@color/white"
                     android:textSize="17sp"/>
             </LinearLayout>
@@ -93,7 +92,7 @@
         android:id="@+id/btnSelectDateTime"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Chọn ngày và giờ"
+        android:text="Set time"
         android:layout_gravity="center_horizontal"
         android:background="@drawable/rounded_corner1"
         android:textColor="@color/black"

@@ -87,8 +87,16 @@ class home : Fragment() {
             LightItem("Storage Room", false, 45, "OFF"),
         )
 
+        val roomItems = listOf(
+            RoomItem("Living Room", 3, lightItems),
+            RoomItem("Bedroom", 2, lightItems),
+            RoomItem("Kitchen", 4, lightItems),
+            RoomItem("Bathroom", 1, lightItems),
+            RoomItem("Garage", 2, lightItems)
+        )
+
         // Kết nối ListView với Adapter
-        val adapter = LightAdapter(requireContext(), lightItems) //  Sửa lỗi: `this` -> `requireContext()`
+        val adapter = RoomAdapter(requireContext(), roomItems) //  Sửa lỗi: `this` -> `requireContext()`
         lightListView.adapter = adapter
     }
 }

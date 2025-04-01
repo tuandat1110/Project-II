@@ -15,10 +15,8 @@ class LightAdapter(private val context: Context, private val lights: List<LightI
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         val view = convertView as? LightControlView ?: LightControlView(context)
-
         // Cập nhật dữ liệu cho LightControlView
         view.setLightData(getItem(position))
-
         return view
     }
 }

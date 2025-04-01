@@ -15,11 +15,11 @@ class LightControlView @JvmOverloads constructor(
     private val switchLight: Switch
     private val seekBarBrightness: SeekBar
     private val nameLight: TextView
-    private val status: TextView  // Đã khởi tạo tránh lỗi
+    private val status: TextView
 
     init {
+        //inflate để chuyển 1 file xml thành 1 view
         LayoutInflater.from(context).inflate(R.layout.custom_light_control, this, true)
-
         switchLight = findViewById(R.id.switchLight)
         seekBarBrightness = findViewById(R.id.seekBarBrightness)
         nameLight = findViewById(R.id.nameLight)

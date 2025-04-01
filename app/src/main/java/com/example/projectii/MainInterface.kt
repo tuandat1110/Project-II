@@ -23,15 +23,15 @@ class MainInterface : AppCompatActivity() {
         bottomNavigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.home -> {
-                    replaceFragment(home())
+                    replaceFragment(home()) //hiển thị fragment tương ứng
                     true
                 }
                 R.id.profile -> {
-                    replaceFragment(profile())
+                    replaceFragment(profile())  //hiển thị fragment tương ứng
                     true
                 }
                 R.id.setting -> {
-                    replaceFragment(setting())
+                    replaceFragment(setting())  //hiển thị fragment tương ứng
                     true
                 }
                 else -> false
@@ -42,6 +42,7 @@ class MainInterface : AppCompatActivity() {
         replaceFragment(home())
     }
 
+    //hàm hiển thị fragment
     private fun replaceFragment(fragment: Fragment) {
         val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.frame_layout, fragment)
