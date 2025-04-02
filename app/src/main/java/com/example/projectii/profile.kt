@@ -2,11 +2,18 @@ package com.example.projectii
 
 import android.content.Intent
 import android.os.Bundle
+import android.provider.Contacts
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.EditText
+import android.widget.TextView
+import android.widget.Toast
+import com.example.projectii.data.User
+import com.example.projectii.data.UserDAO
+import org.w3c.dom.Text
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -24,6 +31,13 @@ class profile : Fragment() {
     private var param2: String? = null
 
     private lateinit var logout_btn:Button
+    private lateinit var save_btn: Button
+    private lateinit var textViewName: TextView
+    private lateinit var textViewEmail: TextView
+    private lateinit var fulLName: EditText
+    private lateinit var email: EditText
+    private lateinit var phone: EditText
+    private lateinit var address: EditText
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,10 +57,38 @@ class profile : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        var dao = UserDAO(requireContext())
         logout_btn = view.findViewById(R.id.logout_btn)
+        save_btn = view.findViewById(R.id.save_btn)
+        textViewName = view.findViewById(R.id.full_name)
+        textViewEmail = view.findViewById(R.id.your_email)
+        fulLName = view.findViewById(R.id.full_name)
+        email = view.findViewById(R.id.email)
+        phone = view.findViewById(R.id.phone)
+        address = view.findViewById(R.id.address)
         logout_btn.setOnClickListener {
             val intent = Intent(requireContext(), MainActivity::class.java)
             startActivity(intent)
+        }
+
+        save_btn.setOnClickListener {
+            var nameString:String = fulLName.text.toString()
+            var emailString:String = email.text.toString()
+            var phoneString:String = phone.text.toString()
+            var addressString:String = address.text.toString()
+
+            if(emailString != "" && nameString != ""){
+                if(!dao.checkUser(emailString)){
+                    if(dao.insertUser1(User(nameString,emailString,phoneString,addressString))){
+                        Toast.makeText(requireContext(), "Saved!", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                else{
+                    if(dao.updateUser(User(nameString,emailString,phoneString,addressString),emailString)){
+                        Toast.makeText(requireContext(), "Saved!", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
         }
     }
         companion object {

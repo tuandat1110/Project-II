@@ -11,14 +11,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat.startActivity
 import com.example.projectii.data.UserDAO
 
-
 class MainActivity : AppCompatActivity() {
 
     private lateinit var registerText: TextView
     private lateinit var loginButton: Button
     private lateinit var usernameInput: EditText
     private lateinit var passwordInput: EditText
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

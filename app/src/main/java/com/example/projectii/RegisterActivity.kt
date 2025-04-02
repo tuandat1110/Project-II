@@ -16,6 +16,7 @@ class RegisterActivity : AppCompatActivity() {
     lateinit var username: EditText
     lateinit var password: EditText
     lateinit var confirmPasswod: EditText
+    lateinit var email: EditText
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
@@ -26,6 +27,7 @@ class RegisterActivity : AppCompatActivity() {
         username = findViewById(R.id.username_input)
         password = findViewById(R.id.password_input)
         confirmPasswod = findViewById(R.id.confirm_password_input)
+        email = findViewById(R.id.email)
 
         TextViewLogin.setOnClickListener{
             var intent = Intent(this,MainActivity::class.java)
@@ -36,15 +38,17 @@ class RegisterActivity : AppCompatActivity() {
             var usernameString:String = username.text.toString()
             var passwordString:String = password.text.toString()
             var confirmPasswordString:String = confirmPasswod.text.toString()
-            if(usernameString == "" || passwordString == "" || confirmPasswordString == ""){
+            var emailString:String = email.text.toString()
+            if(usernameString == "" || passwordString == "" || confirmPasswordString == "" || emailString == ""){
                 Toast.makeText(this,"Please fill fully information!",Toast.LENGTH_SHORT).show()
             }
             else if(passwordString != confirmPasswordString){
                     Toast.makeText(this,"Confirmation password does not match!", Toast.LENGTH_SHORT).show()
             }
             else{
-                if (userDao.insertUser(UserData(usernameString, passwordString))) {
+                if (userDao.insertUser(UserData(usernameString, passwordString,emailString))) {
                     Toast.makeText(this, "Register succesfully!", Toast.LENGTH_SHORT).show()
+
                     startActivity(Intent(this, MainActivity::class.java))
                     finish()
                 } else {

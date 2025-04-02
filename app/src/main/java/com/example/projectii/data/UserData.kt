@@ -1,3 +1,3 @@
 package com.example.projectii.data
 
-data class UserData(var username:String,var password:String)
+data class UserData(var username:String,var password:String,var email:String)
