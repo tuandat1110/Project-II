@@ -51,6 +51,32 @@ class UserDAO(context:Context) {
         return rs != -1L
     }
 
+    fun findUser(email: String): Boolean{
+        val db = dbHelper.readableDatabase
+        val query = "SELECT * FROM ${DatabaseHandler.TABLE_USER} WHERE ${DatabaseHandler.COLUMN_EMAIL} = ? "
+        val cursor = db.rawQuery(query, arrayOf(email))
+        var isCheck = false
+        if (cursor != null && cursor.moveToFirst()) { // Kiểm tra cursor có dữ liệu không
+            isCheck = true
+        }
+        cursor?.close()
+        db.close()
+        return isCheck
+    }
+
+    fun findAccount(user:String): Boolean{
+        val db = dbHelper.readableDatabase
+        val query = "SELECT * FROM ${DatabaseHandler.TABLE_ACCOUNT} WHERE ${DatabaseHandler.COLUMN_USERNAME} = ? "
+        val cursor = db.rawQuery(query, arrayOf(user))
+        var isCheck = false
+        if (cursor != null && cursor.moveToFirst()) { // Kiểm tra cursor có dữ liệu không
+            isCheck = true
+        }
+        cursor?.close()
+        db.close()
+        return isCheck
+    }
+
     fun updateUser(user: User, email: String): Boolean {
         val db = dbHelper.writableDatabase
         val values = ContentValues().apply {
@@ -68,8 +94,17 @@ class UserDAO(context:Context) {
             arrayOf(email)               // Giá trị cho điều kiện WHERE
         )
 
-        // Trả về true nếu có ít nhất 1 hàng được cập nhật
         return rowsAffected > 0
+    }
+
+    fun insertSampleRooms() {
+        val db = dbHelper.writableDatabase
+        db.execSQL("INSERT INTO ${DatabaseHandler.TABLE_ROOM} (${DatabaseHandler.COLUMN_ROOM_NAME}, ${DatabaseHandler.COLUMN_NUMBER_OF_LIGHTS}) VALUES ('Living Room', 3)")
+        db.execSQL("INSERT INTO ${DatabaseHandler.TABLE_ROOM} (${DatabaseHandler.COLUMN_ROOM_NAME}, ${DatabaseHandler.COLUMN_NUMBER_OF_LIGHTS}) VALUES ('Bedroom', 2)")
+        db.execSQL("INSERT INTO ${DatabaseHandler.TABLE_ROOM} (${DatabaseHandler.COLUMN_ROOM_NAME}, ${DatabaseHandler.COLUMN_NUMBER_OF_LIGHTS}) VALUES ('Kitchen', 4)")
+        db.execSQL("INSERT INTO ${DatabaseHandler.TABLE_ROOM} (${DatabaseHandler.COLUMN_ROOM_NAME}, ${DatabaseHandler.COLUMN_NUMBER_OF_LIGHTS}) VALUES ('Bathroom', 1)")
+        db.execSQL("INSERT INTO ${DatabaseHandler.TABLE_ROOM} (${DatabaseHandler.COLUMN_ROOM_NAME}, ${DatabaseHandler.COLUMN_NUMBER_OF_LIGHTS}) VALUES ('Garage', 2)")
+        db.close()
     }
 
     fun checkUser(email:String): Boolean {
@@ -100,4 +135,27 @@ class UserDAO(context:Context) {
         db.close()
         return isLoggedIn
     }
+
+//    fun deleteLastUser() {
+//        val db = dbHelper.writableDatabase
+//        db.execSQL("DELETE FROM UserTable WHERE ROWID = (SELECT MAX(ROWID) FROM UserTable)")
+//        db.close()
+//    }
+
+    fun getUserByUsername(username:String) : UserData? {
+        val db = dbHelper.readableDatabase
+        val cursor = db.rawQuery("SELECT * FROM ${DatabaseHandler.TABLE_ACCOUNT} WHERE ${DatabaseHandler.COLUMN_USERNAME} = ?",arrayOf(username))
+        var user: UserData ?= null
+
+        if(cursor.moveToFirst()){
+            val userName = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHandler.COLUMN_USERNAME))
+            val passWord = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHandler.COLUMN_PASSWORD))
+            val email = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHandler.COLUMN_EMAIL))
+            user = UserData(userName,passWord,email)
+        }
+
+        cursor.close()
+        return user
+    }
+
 }

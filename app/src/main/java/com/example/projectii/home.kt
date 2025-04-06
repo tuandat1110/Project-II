@@ -8,6 +8,8 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ListView
 import android.widget.Toast
+import androidx.annotation.BinderThread
+import com.example.projectii.data.UserDAO
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -69,6 +71,14 @@ class home : Fragment() {
 //        }
 
         val lightListView = view.findViewById<ListView>(R.id.listView)
+        val addButton = view.findViewById<Button>(R.id.add)
+
+
+        addButton.setOnClickListener {
+            var userdao = UserDAO(requireContext())
+            userdao.insertSampleRooms()
+            Toast.makeText(requireContext(),"Add room successfully!",Toast.LENGTH_SHORT).show()
+        }
 
         // Danh sách các đèn
         val lightItems = listOf(
@@ -88,11 +98,11 @@ class home : Fragment() {
         )
 
         val roomItems = listOf(
-            RoomItem("Living Room", 3, lightItems),
-            RoomItem("Bedroom", 2, lightItems),
-            RoomItem("Kitchen", 4, lightItems),
-            RoomItem("Bathroom", 1, lightItems),
-            RoomItem("Garage", 2, lightItems)
+            RoomItem("Living Room", 3),
+            RoomItem("Bedroom", 2),
+            RoomItem("Kitchen", 4),
+            RoomItem("Bathroom", 1),
+            RoomItem("Garage", 2)
         )
 
         // Kết nối ListView với Adapter

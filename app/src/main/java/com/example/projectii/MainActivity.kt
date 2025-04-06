@@ -9,7 +9,9 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat.startActivity
+import com.example.projectii.data.DatabaseHandler
 import com.example.projectii.data.UserDAO
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -41,14 +43,22 @@ class MainActivity : AppCompatActivity() {
 
             if (username.isNotEmpty() && password.isNotEmpty()) {
                 if(userDao.checkLogin(username,password)){
-                    Toast.makeText(this,"Login successful!",Toast.LENGTH_SHORT).show()
-                    startActivity(Intent(this, MainInterface::class.java))
+                    val dao = UserDAO(this)
+                    val user = dao.getUserByUsername(username)
+                    if (user != null) {
+                        Toast.makeText(this, "Login successful!", Toast.LENGTH_SHORT).show()
+                        val intent = Intent(this, MainInterface::class.java)
+                        intent.putExtra("email", user.email)  // truyền dữ liệu sang MainInterface
+                        startActivity(intent)
+                    } else {
+                        Toast.makeText(this, "User not found in database!", Toast.LENGTH_SHORT).show()
+                    }
                 }
                 else{
                     Toast.makeText(this,"Wrong username or password!", Toast.LENGTH_SHORT).show()
                 }
             } else {
-                Toast.makeText(this, "Vui lòng nhập đầy đủ thông tin!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Please fill in all the information!", Toast.LENGTH_SHORT).show()
             }
         }
     }

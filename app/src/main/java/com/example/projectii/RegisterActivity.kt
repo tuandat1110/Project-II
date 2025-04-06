@@ -7,6 +7,7 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.projectii.data.User
 import com.example.projectii.data.UserDAO
 import com.example.projectii.data.UserData
 
@@ -46,14 +47,28 @@ class RegisterActivity : AppCompatActivity() {
                     Toast.makeText(this,"Confirmation password does not match!", Toast.LENGTH_SHORT).show()
             }
             else{
-                if (userDao.insertUser(UserData(usernameString, passwordString,emailString))) {
-                    Toast.makeText(this, "Register succesfully!", Toast.LENGTH_SHORT).show()
-
-                    startActivity(Intent(this, MainActivity::class.java))
-                    finish()
-                } else {
-                    Toast.makeText(this, "Username already exists", Toast.LENGTH_SHORT).show()
+                if(userDao.findUser(emailString)){
+                    if (userDao.insertUser(UserData(usernameString, passwordString,emailString))) {
+                        Toast.makeText(this, "Register succesfully!", Toast.LENGTH_SHORT).show()
+                        startActivity(Intent(this, MainActivity::class.java))
+                        finish()
+                    } else {
+                        Toast.makeText(this, "Username already exists", Toast.LENGTH_SHORT).show()
+                    }
                 }
+                else{
+                    if(!userDao.findAccount(usernameString)){
+                        userDao.insertUser(UserData(usernameString, passwordString,emailString))
+                        userDao.insertUser1(User("",emailString,"",""))
+                        Toast.makeText(this, "Register succesfully!", Toast.LENGTH_SHORT).show()
+                        startActivity(Intent(this, MainActivity::class.java))
+                        finish()
+                    }
+                    else {
+                        Toast.makeText(this, "Username already exists", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
             }
 
         }

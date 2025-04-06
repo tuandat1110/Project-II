@@ -17,12 +17,13 @@ class MainInterface : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainInterfaceBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        val email = intent.getStringExtra("email") ?: ""
 
         viewPager = binding.viewPager
         bottomNavigationView = binding.bottomNavigationView
 
         // Thiết lập ViewPager2 với FragmentStateAdapter
-        val pagerAdapter = ViewPagerAdapter(this)
+        val pagerAdapter = ViewPagerAdapter(this, email)
         viewPager.adapter = pagerAdapter
 
         // Đồng bộ ViewPager2 với BottomNavigationView
@@ -58,15 +59,19 @@ class MainInterface : AppCompatActivity() {
 }
 
 // Adapter cho ViewPager2
-class ViewPagerAdapter(activity: AppCompatActivity) : FragmentStateAdapter(activity) {
-    override fun getItemCount(): Int = 3 // Số lượng tab
+class ViewPagerAdapter(activity: AppCompatActivity, private val email: String) : FragmentStateAdapter(activity) {
+    override fun getItemCount(): Int = 3
 
     override fun createFragment(position: Int): Fragment {
+        val bundle = Bundle().apply {
+            putString("email", email)
+        }
+
         return when (position) {
-            0 -> home()
-            1 -> profile()
-            2 -> setting()
-            else -> home()
+            0 -> home().apply { arguments = bundle }
+            1 -> profile().apply { arguments = bundle }
+            2 -> setting().apply { arguments = bundle }
+            else -> home().apply { arguments = bundle }
         }
     }
 }

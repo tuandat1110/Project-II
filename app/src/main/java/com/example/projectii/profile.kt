@@ -58,6 +58,7 @@ class profile : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         var dao = UserDAO(requireContext())
+        val email1 = arguments?.getString("email") ?: ""
         logout_btn = view.findViewById(R.id.logout_btn)
         save_btn = view.findViewById(R.id.save_btn)
         textViewName = view.findViewById(R.id.full_name)
@@ -70,6 +71,9 @@ class profile : Fragment() {
             val intent = Intent(requireContext(), MainActivity::class.java)
             startActivity(intent)
         }
+
+        email.setText(email1)
+        textViewEmail.setText(email1)
 
         save_btn.setOnClickListener {
             var nameString:String = fulLName.text.toString()
