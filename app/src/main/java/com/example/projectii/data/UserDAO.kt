@@ -142,7 +142,7 @@ class UserDAO(context:Context) {
 //        db.close()
 //    }
 
-    fun getUserByUsername(username:String) : UserData? {
+    fun getAccountByUsername(username:String) : UserData? {
         val db = dbHelper.readableDatabase
         val cursor = db.rawQuery("SELECT * FROM ${DatabaseHandler.TABLE_ACCOUNT} WHERE ${DatabaseHandler.COLUMN_USERNAME} = ?",arrayOf(username))
         var user: UserData ?= null
@@ -152,6 +152,22 @@ class UserDAO(context:Context) {
             val passWord = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHandler.COLUMN_PASSWORD))
             val email = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHandler.COLUMN_EMAIL))
             user = UserData(userName,passWord,email)
+        }
+
+        cursor.close()
+        return user
+    }
+
+    fun getUserByEmail(email:String): User?{
+        val db = dbHelper.readableDatabase
+        val cursor = db.rawQuery("SELECT * FROM ${DatabaseHandler.TABLE_USER} WHERE ${DatabaseHandler.COLUMN_EMAIL} = ?",arrayOf(email))
+        var user:User ?= null
+
+        if(cursor.moveToFirst()){
+            val fullName = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHandler.COLUMN_FULLNAME))
+            val phone = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHandler.COLUMN_PHONE))
+            val address = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHandler.COLUMN_ADDRESS))
+            user = User(fullName,email,phone,address)
         }
 
         cursor.close()

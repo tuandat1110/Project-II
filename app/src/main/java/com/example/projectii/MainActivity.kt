@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity() {
             if (username.isNotEmpty() && password.isNotEmpty()) {
                 if(userDao.checkLogin(username,password)){
                     val dao = UserDAO(this)
-                    val user = dao.getUserByUsername(username)
+                    val user = dao.getAccountByUsername(username)
                     if (user != null) {
                         Toast.makeText(this, "Login successful!", Toast.LENGTH_SHORT).show()
                         val intent = Intent(this, MainInterface::class.java)

@@ -35,7 +35,7 @@ class profile : Fragment() {
     private lateinit var textViewName: TextView
     private lateinit var textViewEmail: TextView
     private lateinit var fulLName: EditText
-    private lateinit var email: EditText
+    private lateinit var email: TextView
     private lateinit var phone: EditText
     private lateinit var address: EditText
 
@@ -58,10 +58,10 @@ class profile : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         var dao = UserDAO(requireContext())
-        val email1 = arguments?.getString("email") ?: ""
+        val email1 = arguments?.getString("email") ?: ""  //email lay dc tu khi dang nhap
         logout_btn = view.findViewById(R.id.logout_btn)
         save_btn = view.findViewById(R.id.save_btn)
-        textViewName = view.findViewById(R.id.full_name)
+        textViewName = view.findViewById(R.id.your_name)
         textViewEmail = view.findViewById(R.id.your_email)
         fulLName = view.findViewById(R.id.full_name)
         email = view.findViewById(R.id.email)
@@ -72,27 +72,27 @@ class profile : Fragment() {
             startActivity(intent)
         }
 
-        email.setText(email1)
-        textViewEmail.setText(email1)
+        val user = dao.getUserByEmail(email1)
+        if(user != null){
+            if(user.fullName.isNotEmpty()){
+                textViewName.setText(user.fullName)
+            }
+            fulLName.setText(user.fullName)
+            email.setText(email1)
+            textViewEmail.setText(email1)
+            phone.setText(user.phone)
+            address.setText(user.address)
+        }
 
         save_btn.setOnClickListener {
             var nameString:String = fulLName.text.toString()
-            var emailString:String = email.text.toString()
             var phoneString:String = phone.text.toString()
             var addressString:String = address.text.toString()
 
-            if(emailString != "" && nameString != ""){
-                if(!dao.checkUser(emailString)){
-                    if(dao.insertUser1(User(nameString,emailString,phoneString,addressString))){
-                        Toast.makeText(requireContext(), "Saved!", Toast.LENGTH_SHORT).show()
-                    }
-                }
-                else{
-                    if(dao.updateUser(User(nameString,emailString,phoneString,addressString),emailString)){
-                        Toast.makeText(requireContext(), "Saved!", Toast.LENGTH_SHORT).show()
-                    }
-                }
+            if(dao.updateUser(User(nameString,email1,phoneString,addressString),email1)){
+                Toast.makeText(requireContext(), "Saved!", Toast.LENGTH_SHORT).show()
             }
+            textViewName.setText(nameString)
         }
     }
         companion object {
