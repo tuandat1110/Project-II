@@ -1,11 +1,13 @@
 package com.example.projectii
 
+import android.app.AlertDialog
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.EditText
 import android.widget.ListView
 import android.widget.Toast
 import androidx.annotation.BinderThread
@@ -72,12 +74,37 @@ class home : Fragment() {
 
         val lightListView = view.findViewById<ListView>(R.id.listView)
         val addButton = view.findViewById<Button>(R.id.add)
-
+        val email1 = arguments?.getString("email") ?: ""  //email lay dc tu khi dang nhap
+        var userdao = UserDAO(requireContext())
+        val username: String = userdao.getUsernameByEmail(email1).toString()
 
         addButton.setOnClickListener {
-            var userdao = UserDAO(requireContext())
-            userdao.insertSampleRooms()
-            Toast.makeText(requireContext(),"Add room successfully!",Toast.LENGTH_SHORT).show()
+            val dialogView = layoutInflater.inflate(R.layout.dialog_add_room, null)
+            val edtTen = dialogView.findViewById<EditText>(R.id.edtTenPhong)
+            val edtSoLuong = dialogView.findViewById<EditText>(R.id.edtSoLuongBong)
+            val btnAdd = dialogView.findViewById<Button>(R.id.button_add_room)
+            val dialog = AlertDialog.Builder(requireContext())
+                .setTitle("Thêm phòng")
+                .setView(dialogView)
+                .setPositiveButton("Add", null) // Set sau để không tự đóng dialog
+                .setNegativeButton("Hủy", null)
+                .create()
+            dialog.setOnShowListener {
+                btnAdd.setOnClickListener {
+                    val ten = edtTen.text.toString().trim()
+                    val soLuong = edtSoLuong.text.toString().toIntOrNull()
+
+                    if (ten.isBlank() || soLuong == null || soLuong <= 0) {
+                        Toast.makeText(requireContext(), "Vui lòng nhập đúng thông tin", Toast.LENGTH_SHORT).show()
+                    } else {
+                        // Thêm vào DB trong background thread
+                        if(userdao.insertRoom(username, RoomItem(ten,soLuong))){
+                            Toast.makeText(requireContext(),"Add room successfully!",Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+            }
+           dialog.show()
         }
 
         // Danh sách các đèn
@@ -97,13 +124,7 @@ class home : Fragment() {
             LightItem("Storage Room", false, 45, "OFF"),
         )
 
-        val roomItems = listOf(
-            RoomItem("Living Room", 3),
-            RoomItem("Bedroom", 2),
-            RoomItem("Kitchen", 4),
-            RoomItem("Bathroom", 1),
-            RoomItem("Garage", 2)
-        )
+        val roomItems = userdao.getRoomsByUsername(username)
 
         // Kết nối ListView với Adapter
         val adapter = RoomAdapter(requireContext(), roomItems) //  Sửa lỗi: `this` -> `requireContext()`

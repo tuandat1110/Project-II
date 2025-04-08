@@ -2,6 +2,7 @@ package com.example.projectii.data
 
 import android.content.ContentValues
 import android.content.Context
+import com.example.projectii.RoomItem
 
 class UserDAO(context:Context) {
     private val dbHelper = DatabaseHandler(context)
@@ -97,6 +98,32 @@ class UserDAO(context:Context) {
         return rowsAffected > 0
     }
 
+    fun insertRoom(username: String, room: RoomItem): Boolean {
+        val db = dbHelper.writableDatabase
+        return try {
+            db.execSQL(
+                "INSERT INTO ${DatabaseHandler.TABLE_ROOM} " +
+                        "(${DatabaseHandler.COLUMN_ROOM_NAME}, ${DatabaseHandler.COLUMN_NUMBER_OF_LIGHTS}) " +
+                        "VALUES ('${room.name}', ${room.numberOfLights})"
+            )
+
+            db.execSQL(
+                "INSERT INTO ${DatabaseHandler.TABLE_ACCOUNT_ROOM} " +
+                        "(${DatabaseHandler.COLUMN_USERNAME}, ${DatabaseHandler.COLUMN_ROOM_NAME}) " +
+                        "VALUES ('$username', '${room.name}')"
+            )
+
+            true
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        } finally {
+            db.close()
+        }
+    }
+
+
+
     fun insertSampleRooms() {
         val db = dbHelper.writableDatabase
         db.execSQL("INSERT INTO ${DatabaseHandler.TABLE_ROOM} (${DatabaseHandler.COLUMN_ROOM_NAME}, ${DatabaseHandler.COLUMN_NUMBER_OF_LIGHTS}) VALUES ('Living Room', 3)")
@@ -174,4 +201,44 @@ class UserDAO(context:Context) {
         return user
     }
 
+    fun getUsernameByEmail(email:String):String?{
+        val db = dbHelper.readableDatabase
+        val cursor = db.rawQuery("SELECT * FROM ${DatabaseHandler.TABLE_ACCOUNT} WHERE ${DatabaseHandler.COLUMN_EMAIL} = ?",arrayOf(email))
+        var username:String ?= null
+        if(cursor.moveToFirst()){
+            username = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHandler.COLUMN_USERNAME))
+        }
+        cursor.close()
+        return username
+    }
+
+    
+    fun getRoomsByUsername(username:String):List<RoomItem>{
+        val roomList = mutableListOf<RoomItem>()
+        val db = dbHelper.readableDatabase
+
+        val query = """
+        SELECT r.${DatabaseHandler.COLUMN_ROOM_NAME}, r.${DatabaseHandler.COLUMN_NUMBER_OF_LIGHTS}
+        FROM ${DatabaseHandler.TABLE_ROOM} r
+        INNER JOIN ${DatabaseHandler.TABLE_ACCOUNT_ROOM} ar
+        ON r.${DatabaseHandler.COLUMN_ROOM_NAME} = ar.${DatabaseHandler.COLUMN_ROOM_NAME}
+        WHERE ar.${DatabaseHandler.COLUMN_USERNAME} = ?
+    """
+
+        val cursor = db.rawQuery(query, arrayOf(username))
+
+        if (cursor.moveToFirst()) {
+            do {
+                val roomName = cursor.getString(0)
+                val numberOfLights = cursor.getInt(1)
+                roomList.add(RoomItem(roomName, numberOfLights))
+            } while (cursor.moveToNext())
+        }
+
+        cursor.close()
+        db.close()
+        return roomList
+
+
+    }
 }
