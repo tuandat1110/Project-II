@@ -212,7 +212,6 @@ class UserDAO(context:Context) {
         return username
     }
 
-    
     fun getRoomsByUsername(username:String):List<RoomItem>{
         val roomList = mutableListOf<RoomItem>()
         val db = dbHelper.readableDatabase
@@ -238,7 +237,29 @@ class UserDAO(context:Context) {
         cursor.close()
         db.close()
         return roomList
-
-
     }
+
+    fun deleteRoom(username: String, roomName: String): Boolean {
+        val db = dbHelper.writableDatabase
+
+        // Xóa liên kết trong bảng ACCOUNT_ROOM trước
+        val linkRows = db.delete(
+            DatabaseHandler.TABLE_ACCOUNT_ROOM,
+            "${DatabaseHandler.COLUMN_ROOM_NAME} = ? AND ${DatabaseHandler.COLUMN_USERNAME} = ?",
+            arrayOf(roomName, username)
+        )
+
+        // Nếu liên kết đã bị xóa
+        val roomRows = if (linkRows > 0) {
+            db.delete(
+                DatabaseHandler.TABLE_ROOM,
+                "${DatabaseHandler.COLUMN_ROOM_NAME} = ?",
+                arrayOf(roomName)
+            )
+        } else 0
+
+        db.close()
+        return roomRows > 0
+    }
+
 }

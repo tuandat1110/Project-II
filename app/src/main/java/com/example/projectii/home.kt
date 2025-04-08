@@ -71,6 +71,9 @@ class home : Fragment() {
 //        btnClick.setOnClickListener {
 //            Toast.makeText(requireContext(), "Button Clicked!", Toast.LENGTH_SHORT).show()
 //        }
+        lateinit var adapter: RoomAdapter
+        val roomItems = mutableListOf<RoomItem>()
+
 
         val lightListView = view.findViewById<ListView>(R.id.listView)
         val addButton = view.findViewById<Button>(R.id.add)
@@ -100,34 +103,60 @@ class home : Fragment() {
                         // Thêm vào DB trong background thread
                         if(userdao.insertRoom(username, RoomItem(ten,soLuong))){
                             Toast.makeText(requireContext(),"Add room successfully!",Toast.LENGTH_SHORT).show()
+                            val updatedList = userdao.getRoomsByUsername(username)
+                            roomItems.clear()
+                            roomItems.addAll(updatedList)
+                            adapter.notifyDataSetChanged() // 🔥 Cập nhật lại giao diện
                         }
                     }
                 }
             }
            dialog.show()
         }
+        //mai xem lại src code này
+        lightListView.setOnItemClickListener { parent, view, position, id ->
+            val room = roomItems[position] // lấy item được click
 
-        // Danh sách các đèn
-        val lightItems = listOf(
-            LightItem("Kitchen", false, 80, "OFF"),
-            LightItem("Living Room", false, 40, "OFF"),
-            LightItem("Bedroom", false, 60, "OFF"),
-            LightItem("Garage", false, 70, "OFF"),
-            LightItem("Bathroom", false, 50, "OFF"),
-            LightItem("Hallway", false, 30, "OFF"),
-            LightItem("Garden", false, 90, "OFF"),
-            LightItem("Balcony", false, 20, "OFF"),
-            LightItem("Office", false, 75, "OFF"),
-            LightItem("Guest Room", false, 55, "OFF"),
-            LightItem("Dining Room", false, 65, "OFF"),
-            LightItem("Laundry Room", false, 35, "OFF"),
-            LightItem("Storage Room", false, 45, "OFF"),
-        )
+            AlertDialog.Builder(requireContext())
+                .setTitle("Xóa phòng")
+                .setMessage("Bạn có muốn xóa phòng '${room.name}' không?")
+                .setPositiveButton("OK") { dialog, which ->
+                    // Xử lý xóa phòng khỏi DB và list
+                    if (userdao.deleteRoom(username, room.name)) {
+                        roomItems.removeAt(position)
+                        adapter.notifyDataSetChanged()
+                        Toast.makeText(requireContext(), "Đã xóa phòng!", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(requireContext(), "Xóa thất bại!", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                .setNegativeButton("Hủy", null)
+                .show()
+        }
 
-        val roomItems = userdao.getRoomsByUsername(username)
+
+        roomItems.clear()
+        roomItems.addAll(userdao.getRoomsByUsername(username))
 
         // Kết nối ListView với Adapter
-        val adapter = RoomAdapter(requireContext(), roomItems) //  Sửa lỗi: `this` -> `requireContext()`
+        adapter = RoomAdapter(requireContext(), roomItems) //  Sửa lỗi: `this` -> `requireContext()`
         lightListView.adapter = adapter
     }
 }
+
+// Danh sách các đèn
+//val lightItems = listOf(
+//    LightItem("Kitchen", false, 80, "OFF"),
+//    LightItem("Living Room", false, 40, "OFF"),
+//    LightItem("Bedroom", false, 60, "OFF"),
+//    LightItem("Garage", false, 70, "OFF"),
+//    LightItem("Bathroom", false, 50, "OFF"),
+//    LightItem("Hallway", false, 30, "OFF"),
+//    LightItem("Garden", false, 90, "OFF"),
+//    LightItem("Balcony", false, 20, "OFF"),
+//    LightItem("Office", false, 75, "OFF"),
+//    LightItem("Guest Room", false, 55, "OFF"),
+//    LightItem("Dining Room", false, 65, "OFF"),
+//    LightItem("Laundry Room", false, 35, "OFF"),
+//    LightItem("Storage Room", false, 45, "OFF"),
+//)
