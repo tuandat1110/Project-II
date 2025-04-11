@@ -24,6 +24,8 @@
 
         <activity android:name=".RegisterActivity"/>
         <activity android:name=".MainInterface" />
+        <activity android:name=".DetailRoom" />
+
 
     </application>
 

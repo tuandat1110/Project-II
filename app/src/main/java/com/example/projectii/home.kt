@@ -1,6 +1,7 @@
 package com.example.projectii
 
 import android.app.AlertDialog
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -8,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.FrameLayout
 import android.widget.ListView
 import android.widget.Toast
 import androidx.annotation.BinderThread
@@ -24,6 +26,8 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  */
 class home : Fragment() {
+
+
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -106,41 +110,32 @@ class home : Fragment() {
                             val updatedList = userdao.getRoomsByUsername(username)
                             roomItems.clear()
                             roomItems.addAll(updatedList)
-                            adapter.notifyDataSetChanged() // 🔥 Cập nhật lại giao diện
+                            adapter.notifyDataSetChanged() //  Cập nhật lại giao diện
                         }
                     }
                 }
             }
            dialog.show()
         }
-        //mai xem lại src code này
-        lightListView.setOnItemClickListener { parent, view, position, id ->
-            val room = roomItems[position] // lấy item được click
 
-            AlertDialog.Builder(requireContext())
-                .setTitle("Xóa phòng")
-                .setMessage("Bạn có muốn xóa phòng '${room.name}' không?")
-                .setPositiveButton("OK") { dialog, which ->
-                    // Xử lý xóa phòng khỏi DB và list
-                    if (userdao.deleteRoom(username, room.name)) {
-                        roomItems.removeAt(position)
-                        adapter.notifyDataSetChanged()
-                        Toast.makeText(requireContext(), "Đã xóa phòng!", Toast.LENGTH_SHORT).show()
-                    } else {
-                        Toast.makeText(requireContext(), "Xóa thất bại!", Toast.LENGTH_SHORT).show()
-                    }
-                }
-                .setNegativeButton("Hủy", null)
-                .show()
+        lightListView.setOnItemClickListener { _, _, position, _ ->
+            val selectedItem = lightListView.adapter.getItem(position).toString()
+            val intent = Intent(requireContext(), DetailRoom::class.java)
+            intent.putExtra("itemName", selectedItem)
+            startActivity(intent)
         }
+
+
 
 
         roomItems.clear()
         roomItems.addAll(userdao.getRoomsByUsername(username))
 
         // Kết nối ListView với Adapter
-        adapter = RoomAdapter(requireContext(), roomItems) //  Sửa lỗi: `this` -> `requireContext()`
+        adapter = RoomAdapter(requireContext(), roomItems,username) //  Sửa lỗi: `this` -> `requireContext()`
         lightListView.adapter = adapter
+
+
     }
 }
 

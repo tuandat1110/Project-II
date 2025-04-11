@@ -56,6 +56,12 @@ class MainInterface : AppCompatActivity() {
         // Mặc định hiển thị tab Home
         viewPager.currentItem = 0
     }
+
+    override fun onResume() {
+        super.onResume()
+        binding.viewPager.currentItem = 0 // ép về lại Home tab
+    }
+
 }
 
 // Adapter cho ViewPager2
