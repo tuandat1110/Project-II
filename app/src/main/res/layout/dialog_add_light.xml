@@ -1,0 +1,43 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:padding="20dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <EditText
+        android:id="@+id/edtTenDen"
+        android:hint="Tên đèn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <EditText
+        android:id="@+id/edtPin"
+        android:hint="Pin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <EditText
+        android:id="@+id/edtDoSang"
+        android:hint="Do sang"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <EditText
+        android:id="@+id/edtStatus"
+        android:hint="Status"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+<!--    <EditText-->
+<!--        android:id="@+id/edtSoLuongBong"-->
+<!--        android:hint="Số lượng bóng đèn"-->
+<!--        android:inputType="number"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content" />-->
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/button_add_light"
+        android:text="Add"/>
+</LinearLayout>

@@ -2,6 +2,7 @@ package com.example.projectii.data
 
 import android.content.ContentValues
 import android.content.Context
+import com.example.projectii.LightItem
 import com.example.projectii.RoomItem
 
 class UserDAO(context:Context) {
@@ -237,6 +238,32 @@ class UserDAO(context:Context) {
         cursor.close()
         db.close()
         return roomList
+    }
+
+    fun getLightByNameRoom(name:String):List<LightItem>{
+        val lightList = mutableListOf< LightItem>()
+        val db = dbHelper.readableDatabase
+        val query = """
+        SELECT r.${DatabaseHandler.COLUMN_NAME_LIGHT}, r.${DatabaseHandler.COLUMN_PIN}, r.${DatabaseHandler.COLUMN_BRIGHTNESS},r.${DatabaseHandler.COLUMN_STATUS}
+        FROM ${DatabaseHandler.TABLE_LIGHT_BULB} r
+        WHERE r.${DatabaseHandler.COLUMN_ROOM_NAME} = ?
+    """
+
+        val cursor = db.rawQuery(query, arrayOf(name))
+
+        if (cursor.moveToFirst()) {
+            do {
+                val nameLight = cursor.getString(0)
+                val pin = cursor.getString(1)
+                val brightness = cursor.getInt(2)
+                val status = cursor.getInt(3) == 1
+                lightList.add(LightItem(nameLight,pin,brightness,status))
+            } while (cursor.moveToNext())
+        }
+
+        cursor.close()
+        db.close()
+        return lightList
     }
 
     fun deleteRoom(username: String, roomName: String): Boolean {

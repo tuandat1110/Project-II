@@ -27,6 +27,8 @@ private const val ARG_PARAM2 = "param2"
  */
 class home : Fragment() {
 
+    private lateinit var adapter: RoomAdapter
+    private val roomItems = mutableListOf<RoomItem>()
 
     // TODO: Rename and change types of parameters
     private var param1: String? = null
@@ -75,11 +77,8 @@ class home : Fragment() {
 //        btnClick.setOnClickListener {
 //            Toast.makeText(requireContext(), "Button Clicked!", Toast.LENGTH_SHORT).show()
 //        }
-        lateinit var adapter: RoomAdapter
-        val roomItems = mutableListOf<RoomItem>()
 
-
-        val lightListView = view.findViewById<ListView>(R.id.listView)
+        val roomListView = view.findViewById<ListView>(R.id.listView)
         val addButton = view.findViewById<Button>(R.id.add)
         val email1 = arguments?.getString("email") ?: ""  //email lay dc tu khi dang nhap
         var userdao = UserDAO(requireContext())
@@ -93,7 +92,6 @@ class home : Fragment() {
             val dialog = AlertDialog.Builder(requireContext())
                 .setTitle("Thêm phòng")
                 .setView(dialogView)
-                .setPositiveButton("Add", null) // Set sau để không tự đóng dialog
                 .setNegativeButton("Hủy", null)
                 .create()
             dialog.setOnShowListener {
@@ -111,6 +109,7 @@ class home : Fragment() {
                             roomItems.clear()
                             roomItems.addAll(updatedList)
                             adapter.notifyDataSetChanged() //  Cập nhật lại giao diện
+                            dialog.dismiss()
                         }
                     }
                 }
@@ -118,14 +117,13 @@ class home : Fragment() {
            dialog.show()
         }
 
-        lightListView.setOnItemClickListener { _, _, position, _ ->
-            val selectedItem = lightListView.adapter.getItem(position).toString()
+        roomListView.setOnItemClickListener { _, _, position, _ ->
+            val selectedItem = adapter.getItem(position) as RoomItem
             val intent = Intent(requireContext(), DetailRoom::class.java)
-            intent.putExtra("itemName", selectedItem)
+            intent.putExtra("roomName", selectedItem.name)
+            intent.putExtra("lightCount", selectedItem.numberOfLights)
             startActivity(intent)
         }
-
-
 
 
         roomItems.clear()
@@ -133,7 +131,7 @@ class home : Fragment() {
 
         // Kết nối ListView với Adapter
         adapter = RoomAdapter(requireContext(), roomItems,username) //  Sửa lỗi: `this` -> `requireContext()`
-        lightListView.adapter = adapter
+        roomListView.adapter = adapter
 
 
     }
