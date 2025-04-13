@@ -87,7 +87,7 @@ class DetailRoom : AppCompatActivity() {
         lightItems.addAll(userdao.getLightByNameRoom(name.toString()))
 
 
-        adapter = LightAdapter(this,lightItems)
+        adapter = LightAdapter(this,lightItems,name.toString())
         lightListView.adapter = adapter
 
     }

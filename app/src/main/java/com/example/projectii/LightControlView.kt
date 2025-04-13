@@ -3,6 +3,7 @@ package com.example.projectii
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.Switch
 import android.widget.TextView
@@ -16,10 +17,12 @@ class LightControlView @JvmOverloads constructor(
     private val seekBarBrightness: SeekBar
     private val nameLight: TextView
     private val status: TextView
+    private val icon: ImageView
 
     init {
         //inflate để chuyển 1 file xml thành 1 view
         LayoutInflater.from(context).inflate(R.layout.custom_light_control, this, true)
+        icon = findViewById(R.id.icon)
         switchLight = findViewById(R.id.switchLight)
         seekBarBrightness = findViewById(R.id.seekBarBrightness)
         nameLight = findViewById(R.id.nameLight)

@@ -303,4 +303,17 @@ class UserDAO(context:Context) {
         return roomRows > 0
     }
 
+    fun deleteLight(tenPhong: String, tenDen: String): Boolean {
+        val db = dbHelper.writableDatabase
+
+        val lightRows = db.delete(
+            DatabaseHandler.TABLE_LIGHT_BULB,
+            "${DatabaseHandler.COLUMN_ROOM_NAME} = ? AND ${DatabaseHandler.COLUMN_NAME_LIGHT} = ?",
+            arrayOf(tenPhong, tenDen)
+        )
+
+        db.close()
+        return lightRows > 0
+    }
+
 }
