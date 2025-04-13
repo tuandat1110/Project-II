@@ -29,16 +29,16 @@ class LightControlView @JvmOverloads constructor(
     //  Cập nhật dữ liệu từ LightItem
     fun setLightData(lightItem: LightItem) {
         nameLight.text = lightItem.name
-        switchLight.isChecked = lightItem.isOn
+        switchLight.isChecked = lightItem.status
         seekBarBrightness.progress = lightItem.brightness
-        status.text = if (lightItem.isOn) "ON" else "OFF"
+        status.text = if (lightItem.status) "ON" else "OFF"
 
         //  Ngăn chặn vòng lặp khi cập nhật UI
         switchLight.setOnCheckedChangeListener(null)
         seekBarBrightness.setOnSeekBarChangeListener(null)
 
         switchLight.setOnCheckedChangeListener { _, isChecked ->
-            lightItem.isOn = isChecked
+            lightItem.status = isChecked
             status.text = if (isChecked) "ON" else "OFF"
         }
 

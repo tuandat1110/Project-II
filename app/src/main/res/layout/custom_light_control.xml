@@ -50,6 +50,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginEnd="12dp" />
 
+
     <SeekBar
         android:id="@+id/seekBarBrightness"
         android:layout_width="0dp"

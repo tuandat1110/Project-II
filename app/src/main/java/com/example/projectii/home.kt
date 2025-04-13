@@ -118,11 +118,14 @@ class home : Fragment() {
         }
 
         roomListView.setOnItemClickListener { _, _, position, _ ->
-            val selectedItem = adapter.getItem(position) as RoomItem
-            val intent = Intent(requireContext(), DetailRoom::class.java)
-            intent.putExtra("roomName", selectedItem.name)
-            intent.putExtra("lightCount", selectedItem.numberOfLights)
-            startActivity(intent)
+            val selectedItem = roomListView.adapter.getItem(position) as? RoomItem
+            if (selectedItem != null) {
+                val intent = Intent(requireContext(), DetailRoom::class.java)
+                intent.putExtra("roomName", selectedItem.name)
+                intent.putExtra("lightCount", selectedItem.numberOfLights)
+                startActivity(intent)
+            }
+
         }
 
 
@@ -130,7 +133,7 @@ class home : Fragment() {
         roomItems.addAll(userdao.getRoomsByUsername(username))
 
         // Kết nối ListView với Adapter
-        adapter = RoomAdapter(requireContext(), roomItems,username) //  Sửa lỗi: `this` -> `requireContext()`
+        adapter = RoomAdapter(requireContext(), roomItems,username)
         roomListView.adapter = adapter
 
 

@@ -75,7 +75,7 @@ class DatabaseHandler(context: Context) : SQLiteOpenHelper(context, DB_NAME, nul
             );
         """.trimIndent()
 
-        // 4. Tạo bảng LightBulb, tham chiếu đến Room
+        // 4. Tạo bảngul LightBb, tham chiếu đến Room
         val sqlLightBulb = """
             CREATE TABLE IF NOT EXISTS $TABLE_LIGHT_BULB (
                 $COLUMN_NAME_LIGHT VARCHAR(100) PRIMARY KEY,

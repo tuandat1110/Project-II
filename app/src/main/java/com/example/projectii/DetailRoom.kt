@@ -65,7 +65,7 @@ class DetailRoom : AppCompatActivity() {
                         val light = LightItem(ten, pin, brightness, status == 1)
 
                         // Gọi insertLight truyền vào phòng nào đó (name), ví dụ:
-                        if (userdao.insertLight(name.toString(), light)) {  // chua viet ham nay de insertLight
+                        if (userdao.insertLight(name.toString(), light)) {
                             Toast.makeText(this, "Thêm đèn thành công!", Toast.LENGTH_SHORT).show()
                             lightItems.clear()
                             lightItems.addAll(userdao.getLightByNameRoom(name.toString()))
@@ -82,6 +82,7 @@ class DetailRoom : AppCompatActivity() {
         }
 
 
+        lightItems = mutableListOf()
         lightItems.clear()
         lightItems.addAll(userdao.getLightByNameRoom(name.toString()))
 

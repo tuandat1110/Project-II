@@ -266,6 +266,20 @@ class UserDAO(context:Context) {
         return lightList
     }
 
+    fun insertLight(name:String,light: LightItem): Boolean{
+        val db = dbHelper.writableDatabase
+        val values = ContentValues().apply {
+            put(DatabaseHandler.COLUMN_NAME_LIGHT, light.name)
+            put(DatabaseHandler.COLUMN_PIN, light.pin)
+            put(DatabaseHandler.COLUMN_BRIGHTNESS, light.brightness)
+            put(DatabaseHandler.COLUMN_STATUS, if (light.status) 1 else 0)
+            put(DatabaseHandler.COLUMN_ROOM_NAME,name)
+        }
+        val rs = db.insert(DatabaseHandler.TABLE_LIGHT_BULB,null,values)
+        db.close()
+        return rs != -1L
+    }
+
     fun deleteRoom(username: String, roomName: String): Boolean {
         val db = dbHelper.writableDatabase
 
