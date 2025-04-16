@@ -40,7 +40,7 @@ class UserDAO(context:Context) {
         return result != -1L
     }
 
-    fun insertUser1(user:User): Boolean{
+    fun insertUser1(user: User): Boolean {
         val db = dbHelper.writableDatabase
         val values = ContentValues().apply {
             put(DatabaseHandler.COLUMN_FULLNAME, user.fullName)
@@ -48,14 +48,15 @@ class UserDAO(context:Context) {
             put(DatabaseHandler.COLUMN_PHONE, user.phone)
             put(DatabaseHandler.COLUMN_ADDRESS, user.address)
         }
-        val rs = db.insert(DatabaseHandler.TABLE_USER,null,values)
+        val rs = db.insert(DatabaseHandler.TABLE_USER, null, values)
         db.close()
         return rs != -1L
     }
 
-    fun findUser(email: String): Boolean{
+    fun findUser(email: String): Boolean {
         val db = dbHelper.readableDatabase
-        val query = "SELECT * FROM ${DatabaseHandler.TABLE_USER} WHERE ${DatabaseHandler.COLUMN_EMAIL} = ? "
+        val query =
+            "SELECT * FROM ${DatabaseHandler.TABLE_USER} WHERE ${DatabaseHandler.COLUMN_EMAIL} = ? "
         val cursor = db.rawQuery(query, arrayOf(email))
         var isCheck = false
         if (cursor != null && cursor.moveToFirst()) { // Kiểm tra cursor có dữ liệu không
@@ -66,9 +67,10 @@ class UserDAO(context:Context) {
         return isCheck
     }
 
-    fun findAccount(user:String): Boolean{
+    fun findAccount(user: String): Boolean {
         val db = dbHelper.readableDatabase
-        val query = "SELECT * FROM ${DatabaseHandler.TABLE_ACCOUNT} WHERE ${DatabaseHandler.COLUMN_USERNAME} = ? "
+        val query =
+            "SELECT * FROM ${DatabaseHandler.TABLE_ACCOUNT} WHERE ${DatabaseHandler.COLUMN_USERNAME} = ? "
         val cursor = db.rawQuery(query, arrayOf(user))
         var isCheck = false
         if (cursor != null && cursor.moveToFirst()) { // Kiểm tra cursor có dữ liệu không
@@ -85,7 +87,7 @@ class UserDAO(context:Context) {
             // Đưa các giá trị từ đối tượng User vào ContentValues
             put(DatabaseHandler.COLUMN_FULLNAME, user.fullName)
             put(DatabaseHandler.COLUMN_PHONE, user.phone)
-            put(DatabaseHandler.COLUMN_ADDRESS,user.address)
+            put(DatabaseHandler.COLUMN_ADDRESS, user.address)
         }
 
         // Số hàng bị ảnh hưởng bởi câu lệnh update
@@ -124,7 +126,6 @@ class UserDAO(context:Context) {
     }
 
 
-
     fun insertSampleRooms() {
         val db = dbHelper.writableDatabase
         db.execSQL("INSERT INTO ${DatabaseHandler.TABLE_ROOM} (${DatabaseHandler.COLUMN_ROOM_NAME}, ${DatabaseHandler.COLUMN_NUMBER_OF_LIGHTS}) VALUES ('Living Room', 3)")
@@ -135,13 +136,14 @@ class UserDAO(context:Context) {
         db.close()
     }
 
-    fun checkUser(email:String): Boolean {
+    fun checkUser(email: String): Boolean {
         val db = dbHelper.readableDatabase
-        val query = "SELECT * FROM ${DatabaseHandler.TABLE_USER} WHERE ${DatabaseHandler.COLUMN_EMAIL} = ?"
-        val cursor = db.rawQuery(query,arrayOf(email))
+        val query =
+            "SELECT * FROM ${DatabaseHandler.TABLE_USER} WHERE ${DatabaseHandler.COLUMN_EMAIL} = ?"
+        val cursor = db.rawQuery(query, arrayOf(email))
 
         var isCheck = false
-        if(cursor != null && cursor.moveToFirst()){
+        if (cursor != null && cursor.moveToFirst()) {
             isCheck = true
         }
         cursor?.close()
@@ -151,7 +153,8 @@ class UserDAO(context:Context) {
 
     fun checkLogin(username: String, password: String): Boolean {
         val db = dbHelper.readableDatabase
-        val query = "SELECT * FROM ${DatabaseHandler.TABLE_ACCOUNT} WHERE ${DatabaseHandler.COLUMN_USERNAME} = ? AND ${DatabaseHandler.COLUMN_PASSWORD} = ?"
+        val query =
+            "SELECT * FROM ${DatabaseHandler.TABLE_ACCOUNT} WHERE ${DatabaseHandler.COLUMN_USERNAME} = ? AND ${DatabaseHandler.COLUMN_PASSWORD} = ?"
         val cursor = db.rawQuery(query, arrayOf(username, password))
 
         var isLoggedIn = false
@@ -170,50 +173,64 @@ class UserDAO(context:Context) {
 //        db.close()
 //    }
 
-    fun getAccountByUsername(username:String) : UserData? {
+    fun getAccountByUsername(username: String): UserData? {
         val db = dbHelper.readableDatabase
-        val cursor = db.rawQuery("SELECT * FROM ${DatabaseHandler.TABLE_ACCOUNT} WHERE ${DatabaseHandler.COLUMN_USERNAME} = ?",arrayOf(username))
-        var user: UserData ?= null
+        val cursor = db.rawQuery(
+            "SELECT * FROM ${DatabaseHandler.TABLE_ACCOUNT} WHERE ${DatabaseHandler.COLUMN_USERNAME} = ?",
+            arrayOf(username)
+        )
+        var user: UserData? = null
 
-        if(cursor.moveToFirst()){
-            val userName = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHandler.COLUMN_USERNAME))
-            val passWord = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHandler.COLUMN_PASSWORD))
+        if (cursor.moveToFirst()) {
+            val userName =
+                cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHandler.COLUMN_USERNAME))
+            val passWord =
+                cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHandler.COLUMN_PASSWORD))
             val email = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHandler.COLUMN_EMAIL))
-            user = UserData(userName,passWord,email)
+            user = UserData(userName, passWord, email)
         }
 
         cursor.close()
         return user
     }
 
-    fun getUserByEmail(email:String): User?{
+    fun getUserByEmail(email: String): User? {
         val db = dbHelper.readableDatabase
-        val cursor = db.rawQuery("SELECT * FROM ${DatabaseHandler.TABLE_USER} WHERE ${DatabaseHandler.COLUMN_EMAIL} = ?",arrayOf(email))
-        var user:User ?= null
+        val cursor = db.rawQuery(
+            "SELECT * FROM ${DatabaseHandler.TABLE_USER} WHERE ${DatabaseHandler.COLUMN_EMAIL} = ?",
+            arrayOf(email)
+        )
+        var user: User? = null
 
-        if(cursor.moveToFirst()){
-            val fullName = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHandler.COLUMN_FULLNAME))
+        if (cursor.moveToFirst()) {
+            val fullName =
+                cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHandler.COLUMN_FULLNAME))
             val phone = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHandler.COLUMN_PHONE))
-            val address = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHandler.COLUMN_ADDRESS))
-            user = User(fullName,email,phone,address)
+            val address =
+                cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHandler.COLUMN_ADDRESS))
+            user = User(fullName, email, phone, address)
         }
 
         cursor.close()
         return user
     }
 
-    fun getUsernameByEmail(email:String):String?{
+    fun getUsernameByEmail(email: String): String? {
         val db = dbHelper.readableDatabase
-        val cursor = db.rawQuery("SELECT * FROM ${DatabaseHandler.TABLE_ACCOUNT} WHERE ${DatabaseHandler.COLUMN_EMAIL} = ?",arrayOf(email))
-        var username:String ?= null
-        if(cursor.moveToFirst()){
-            username = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHandler.COLUMN_USERNAME))
+        val cursor = db.rawQuery(
+            "SELECT * FROM ${DatabaseHandler.TABLE_ACCOUNT} WHERE ${DatabaseHandler.COLUMN_EMAIL} = ?",
+            arrayOf(email)
+        )
+        var username: String? = null
+        if (cursor.moveToFirst()) {
+            username =
+                cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHandler.COLUMN_USERNAME))
         }
         cursor.close()
         return username
     }
 
-    fun getRoomsByUsername(username:String):List<RoomItem>{
+    fun getRoomsByUsername(username: String): List<RoomItem> {
         val roomList = mutableListOf<RoomItem>()
         val db = dbHelper.readableDatabase
 
@@ -240,8 +257,8 @@ class UserDAO(context:Context) {
         return roomList
     }
 
-    fun getLightByNameRoom(name:String):List<LightItem>{
-        val lightList = mutableListOf< LightItem>()
+    fun getLightByNameRoom(name: String): List<LightItem> {
+        val lightList = mutableListOf<LightItem>()
         val db = dbHelper.readableDatabase
         val query = """
         SELECT r.${DatabaseHandler.COLUMN_NAME_LIGHT}, r.${DatabaseHandler.COLUMN_PIN}, r.${DatabaseHandler.COLUMN_BRIGHTNESS},r.${DatabaseHandler.COLUMN_STATUS}
@@ -257,7 +274,7 @@ class UserDAO(context:Context) {
                 val pin = cursor.getString(1)
                 val brightness = cursor.getInt(2)
                 val status = cursor.getInt(3) == 1
-                lightList.add(LightItem(nameLight,pin,brightness,status))
+                lightList.add(LightItem(nameLight, pin, brightness, status))
             } while (cursor.moveToNext())
         }
 
@@ -266,16 +283,16 @@ class UserDAO(context:Context) {
         return lightList
     }
 
-    fun insertLight(name:String,light: LightItem): Boolean{
+    fun insertLight(name: String, light: LightItem): Boolean {
         val db = dbHelper.writableDatabase
         val values = ContentValues().apply {
             put(DatabaseHandler.COLUMN_NAME_LIGHT, light.name)
             put(DatabaseHandler.COLUMN_PIN, light.pin)
             put(DatabaseHandler.COLUMN_BRIGHTNESS, light.brightness)
             put(DatabaseHandler.COLUMN_STATUS, if (light.status) 1 else 0)
-            put(DatabaseHandler.COLUMN_ROOM_NAME,name)
+            put(DatabaseHandler.COLUMN_ROOM_NAME, name)
         }
-        val rs = db.insert(DatabaseHandler.TABLE_LIGHT_BULB,null,values)
+        val rs = db.insert(DatabaseHandler.TABLE_LIGHT_BULB, null, values)
         db.close()
         return rs != -1L
     }
@@ -316,4 +333,21 @@ class UserDAO(context:Context) {
         return lightRows > 0
     }
 
+    fun countLights(roomName: String): Int {
+        val db = dbHelper.readableDatabase
+        val query = """
+        SELECT COUNT(*) FROM ${DatabaseHandler.TABLE_LIGHT_BULB}
+        WHERE ${DatabaseHandler.COLUMN_ROOM_NAME} = ?
+    """
+        val cursor = db.rawQuery(query, arrayOf(roomName))
+        var count = 0
+        if (cursor.moveToFirst()) {
+            count = cursor.getInt(0)
+        }
+        cursor.close()
+        return count
+    }
+
 }
+
+

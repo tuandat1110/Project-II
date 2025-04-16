@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.projectii.data.UserDAO
 import java.util.zip.Inflater
 
-class RoomAdapter(private val context: Context, private val rooms: MutableList<RoomItem>, private val username: String ) : BaseAdapter() {
+class RoomAdapter(private val context: Context, private val rooms: MutableList<RoomItem>, private val username: String,private val count:Int) : BaseAdapter() {
 
     override fun getCount(): Int = rooms.size
 
@@ -47,20 +47,20 @@ class RoomAdapter(private val context: Context, private val rooms: MutableList<R
         //Xu ly doan xoa phong nay sau
         viewHolder.deleteBtn.setOnClickListener {
             AlertDialog.Builder(context)
-                .setTitle("Xóa phòng")
-                .setMessage("Bạn có chắc chắn muốn xóa phòng '${rooms[position].name}' không?")
+                .setTitle("Delete room")
+                .setMessage("Are you sure that you want to delete '${rooms[position].name}'?")
                 .setPositiveButton("OK") { dialog, which ->
                     // Xóa phòng khỏi cơ sở dữ liệu và danh sách
                     if (UserDAO(context).deleteRoom(username, rooms[position].name)) {
                         // Xóa phòng khỏi danh sách
                         rooms.removeAt(position)
                         notifyDataSetChanged()
-                        Toast.makeText(context, "Đã xóa phòng!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Deleted!", Toast.LENGTH_SHORT).show()
                     } else {
-                        Toast.makeText(context, "Xóa thất bại!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Failed to delete!", Toast.LENGTH_SHORT).show()
                     }
                 }
-                .setNegativeButton("Hủy", null)
+                .setNegativeButton("Cancel", null)
                 .show()
         }
 

@@ -7,25 +7,33 @@
 
     <EditText
         android:id="@+id/edtTenDen"
-        android:hint="Tên đèn"
+        android:hint="Light name"
+        android:textColorHint="@color/black"
+        android:textSize="25sp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
     <EditText
         android:id="@+id/edtPin"
         android:hint="Pin"
+        android:textColorHint="@color/black"
+        android:textSize="25sp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
     <EditText
         android:id="@+id/edtDoSang"
-        android:hint="Do sang"
+        android:hint="Brightness"
+        android:textColorHint="@color/black"
+        android:textSize="25sp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
     <EditText
         android:id="@+id/edtStatus"
         android:hint="Status"
+        android:textColorHint="@color/black"
+        android:textSize="25sp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
@@ -35,9 +43,14 @@
 <!--        android:inputType="number"-->
 <!--        android:layout_width="match_parent"-->
 <!--        android:layout_height="wrap_content" />-->
-    <Button
+
+    <androidx.appcompat.widget.AppCompatButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/button_add_light"
-        android:text="Add"/>
+        android:text="Add"
+        android:background="@drawable/button_border"
+        android:padding="9dp"
+        android:layout_marginTop="3dp"
+        android:textSize="20sp"
+        android:id="@+id/button_add_light" />
 </LinearLayout>
