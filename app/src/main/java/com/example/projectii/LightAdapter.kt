@@ -65,24 +65,24 @@ class LightAdapter(private val context: Context, private val lights: MutableList
         })
 
 
-        viewHolder.icon.setOnClickListener {
-            AlertDialog.Builder(context)
-                .setTitle("Delete light")
-                .setMessage("Are you sure that you want to delete '${lights[position].name}'?")
-                .setPositiveButton("OK") { dialog, which ->
-                    // Xóa phòng khỏi cơ sở dữ liệu và danh sách
-                    if (UserDAO(context).deleteLight(tenPhong, lights[position].name)) {
-                        // Xóa phòng khỏi danh sách
-                        lights.removeAt(position)
-                        notifyDataSetChanged()
-                        Toast.makeText(context, "Deleted!", Toast.LENGTH_SHORT).show()
-                    } else {
-                        Toast.makeText(context, "Failed to delete!", Toast.LENGTH_SHORT).show()
-                    }
-                }
-                .setNegativeButton("Cancel", null)
-                .show()
-        }
+//        viewHolder.icon.setOnClickListener {
+//            AlertDialog.Builder(context)
+//                .setTitle("Delete light")
+//                .setMessage("Are you sure that you want to delete '${lights[position].name}'?")
+//                .setPositiveButton("OK") { dialog, which ->
+//                    // Xóa phòng khỏi cơ sở dữ liệu và danh sách
+//                    if (UserDAO(context).deleteLight(tenPhong, lights[position].name)) {
+//                        // Xóa phòng khỏi danh sách
+//                        lights.removeAt(position)
+//                        notifyDataSetChanged()
+//                        Toast.makeText(context, "Deleted!", Toast.LENGTH_SHORT).show()
+//                    } else {
+//                        Toast.makeText(context, "Failed to delete!", Toast.LENGTH_SHORT).show()
+//                    }
+//                }
+//                .setNegativeButton("Cancel", null)
+//                .show()
+//        }
 
         return item
     }

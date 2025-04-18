@@ -5,9 +5,11 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ListView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.projectii.data.UserDAO
@@ -75,8 +77,62 @@ class DetailRoom : AppCompatActivity() {
                             adapter.notifyDataSetChanged()
                             dialog.dismiss()
                         } else {
-                            Toast.makeText(this, "Failed to add light!", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, "Light name existed in this room", Toast.LENGTH_SHORT).show()
                         }
+                    }
+                }
+            }
+
+            dialog.show()
+            val negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
+            negativeButton.setTextColor(Color.BLACK)
+        }
+
+        lightListView.setOnItemClickListener { _, _, position, _ ->
+            Log.d("TEST_CLICK", "Clicked item at position $position")
+            val dialogView = layoutInflater.inflate(R.layout.dialog_update_light, null)
+            val edtTen = dialogView.findViewById<TextView>(R.id.edtTenDen)
+            val edtPin = dialogView.findViewById<EditText>(R.id.edtPin)
+            val btnUpdate = dialogView.findViewById<Button>(R.id.button_update_light)
+            val btnDelete = dialogView.findViewById<Button>(R.id.button_delete_light)
+
+
+            val selectedLight = lightItems[position]
+            val lightName = selectedLight.name
+            val pin = selectedLight.pin
+
+            edtTen.text = name
+            edtPin.setText(pin)
+
+
+            val dialog = AlertDialog.Builder(this) // nếu đang dùng Fragment
+                .setTitle("Update light")
+                .setView(dialogView)
+                .setNegativeButton("Cancel", null)
+                .create()
+
+            dialog.setOnShowListener {
+                btnUpdate.setOnClickListener {
+                    val newPin = edtPin.text.toString()
+                    if(userdao.updateLight(lightName,newPin) && newPin != pin){
+                        Toast.makeText(this, "Update succesfully!", Toast.LENGTH_SHORT).show()
+                        lightItems.clear()
+                        lightItems.addAll(userdao.getLightByNameRoom(name.toString()))
+                        adapter.notifyDataSetChanged()
+                        dialog.dismiss()
+                    }
+                }
+
+                btnDelete.setOnClickListener {
+                    // Xử lý xóa đèn tại đây, ví dụ:
+                    if (userdao.deleteLight(name.toString(),lightName)) {
+                        Toast.makeText(this, "Light deleted successfully!", Toast.LENGTH_SHORT).show()
+                        lightItems.clear()
+                        lightItems.addAll(userdao.getLightByNameRoom(name.toString()))
+                        adapter.notifyDataSetChanged()
+                        dialog.dismiss()
+                    } else {
+                        Toast.makeText(this, "Failed to delete light", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
@@ -92,6 +148,8 @@ class DetailRoom : AppCompatActivity() {
 
         adapter = LightAdapter(this,lightItems,name.toString())
         lightListView.adapter = adapter
+
+
 
     }
 }

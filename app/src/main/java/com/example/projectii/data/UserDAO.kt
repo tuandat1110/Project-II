@@ -347,6 +347,21 @@ class UserDAO(context:Context) {
         cursor.close()
         return count
     }
+    fun updateLight(lightName: String, pin: String?): Boolean {
+        val db = dbHelper.writableDatabase
+        val contentValues = ContentValues().apply {
+            put(DatabaseHandler.COLUMN_PIN, pin)
+        }
+        val rowsAffected = db.update(
+            "${DatabaseHandler.TABLE_LIGHT_BULB}",
+            contentValues,
+            "${DatabaseHandler.COLUMN_NAME_LIGHT} = ?",
+            arrayOf(lightName)
+        )
+        db.close()
+        return rowsAffected > 0
+    }
+
 
 }
 

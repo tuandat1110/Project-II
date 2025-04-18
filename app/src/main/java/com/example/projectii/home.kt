@@ -126,6 +126,8 @@ class home : Fragment() {
                             roomItems.addAll(updatedList)
                             adapter.notifyDataSetChanged() //  Cập nhật lại giao diện
                             dialog.dismiss()
+                        } else {
+                            Toast.makeText(requireContext(), "Room name existed!", Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
@@ -153,23 +155,7 @@ class home : Fragment() {
         adapter = RoomAdapter(requireContext(), roomItems,username,lightCount)
         roomListView.adapter = adapter
 
-
     }
-}
 
-// Danh sách các đèn
-//val lightItems = listOf(
-//    LightItem("Kitchen", false, 80, "OFF"),
-//    LightItem("Living Room", false, 40, "OFF"),
-//    LightItem("Bedroom", false, 60, "OFF"),
-//    LightItem("Garage", false, 70, "OFF"),
-//    LightItem("Bathroom", false, 50, "OFF"),
-//    LightItem("Hallway", false, 30, "OFF"),
-//    LightItem("Garden", false, 90, "OFF"),
-//    LightItem("Balcony", false, 20, "OFF"),
-//    LightItem("Office", false, 75, "OFF"),
-//    LightItem("Guest Room", false, 55, "OFF"),
-//    LightItem("Dining Room", false, 65, "OFF"),
-//    LightItem("Laundry Room", false, 35, "OFF"),
-//    LightItem("Storage Room", false, 45, "OFF"),
-//)
+
+}
