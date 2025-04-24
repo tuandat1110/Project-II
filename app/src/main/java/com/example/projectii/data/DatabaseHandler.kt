@@ -9,7 +9,7 @@ class DatabaseHandler(context: Context) : SQLiteOpenHelper(context, DB_NAME, nul
     companion object {
         // Thông tin Database
         const val DB_NAME = "Project-II-update"    // Tên database
-        const val DB_VERSION = 3                   // Phiên bản database
+        const val DB_VERSION = 4                   // Phiên bản database
 
         // Thông tin bảng tài khoản
         const val TABLE_ACCOUNT = "Account"
@@ -59,12 +59,13 @@ class DatabaseHandler(context: Context) : SQLiteOpenHelper(context, DB_NAME, nul
 
         // 2. Tạo bảng Account, tham chiếu đến User
         val sqlAccount = """
-            CREATE TABLE IF NOT EXISTS $TABLE_ACCOUNT (
-                $COLUMN_USERNAME VARCHAR(50) PRIMARY KEY,
+               CREATE TABLE IF NOT EXISTS $TABLE_ACCOUNT (
+                $COLUMN_USERNAME VARCHAR(50) NOT NULL,
                 $COLUMN_PASSWORD VARCHAR(255) NOT NULL,
                 $COLUMN_EMAIL VARCHAR(255) NOT NULL,
-                FOREIGN KEY ($COLUMN_EMAIL) REFERENCES $TABLE_USER($COLUMN_EMAIL_USER) ON DELETE CASCADE
-            );
+                FOREIGN KEY ($COLUMN_EMAIL) REFERENCES $TABLE_USER($COLUMN_EMAIL_USER) ON DELETE CASCADE,
+                PRIMARY KEY ($COLUMN_USERNAME, $COLUMN_EMAIL)
+               );
         """.trimIndent()
 
         // 3. Tạo bảng Room

@@ -230,6 +230,31 @@ class UserDAO(context:Context) {
         return username
     }
 
+    fun getEmailByUsername(username: String): String? {
+        val db = dbHelper.readableDatabase
+        val cursor = db.rawQuery(
+            "SELECT * FROM ${DatabaseHandler.TABLE_ACCOUNT} WHERE ${DatabaseHandler.COLUMN_USERNAME} = ?",
+            arrayOf(username)
+        )
+        var email: String? = null
+        if (cursor.moveToFirst()) {
+            email = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHandler.COLUMN_EMAIL))
+        }
+        cursor.close()
+        return email
+    }
+
+    fun updatePassword(username: String, newPassword: String): Boolean {
+        val db = dbHelper.writableDatabase
+        val contentValues = ContentValues().apply {
+            put(DatabaseHandler.COLUMN_PASSWORD, newPassword)
+        }
+
+        val result = db.update(DatabaseHandler.TABLE_ACCOUNT, contentValues, "${DatabaseHandler.COLUMN_USERNAME} = ?", arrayOf(username))
+        db.close()
+        return result > 0
+    }
+
     fun getRoomsByUsername(username: String): List<RoomItem> {
         val roomList = mutableListOf<RoomItem>()
         val db = dbHelper.readableDatabase

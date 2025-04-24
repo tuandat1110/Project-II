@@ -19,6 +19,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var loginButton: Button
     private lateinit var usernameInput: EditText
     private lateinit var passwordInput: EditText
+    private lateinit var forgotPassword: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,10 +31,15 @@ class MainActivity : AppCompatActivity() {
         registerText = findViewById(R.id.RegisterTextView)
         usernameInput = findViewById(R.id.username_input)
         passwordInput = findViewById(R.id.password_input)
+        forgotPassword = findViewById(R.id.forgot_password)
 
         // Xử lý sự kiện nhấn vào "Đăng ký"
         registerText.setOnClickListener {
             startActivity(Intent(this, RegisterActivity::class.java))
+        }
+
+        forgotPassword.setOnClickListener {
+            startActivity(Intent(this, ForgotPassword::class.java))
         }
 
         // Xử lý sự kiện nhấn vào nút "Đăng nhập"
