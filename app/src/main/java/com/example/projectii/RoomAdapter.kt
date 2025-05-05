@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.projectii.data.UserDAO
 import java.util.zip.Inflater
 
-class RoomAdapter(private val context: Context, private val rooms: MutableList<RoomItem>, private val username: String,private val count:Int) : BaseAdapter() {
+class RoomAdapter(private val context: Context, private val rooms: MutableList<RoomItem>, private val username: String) : BaseAdapter() {
 
     override fun getCount(): Int = rooms.size
 

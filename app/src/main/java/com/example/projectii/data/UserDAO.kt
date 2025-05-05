@@ -110,6 +110,7 @@ class UserDAO(context:Context) {
                         "VALUES ('${room.name}', ${room.numberOfLights})"
             )
 
+
             db.execSQL(
                 "INSERT INTO ${DatabaseHandler.TABLE_ACCOUNT_ROOM} " +
                         "(${DatabaseHandler.COLUMN_USERNAME}, ${DatabaseHandler.COLUMN_ROOM_NAME}) " +
@@ -128,11 +129,11 @@ class UserDAO(context:Context) {
 
     fun insertSampleRooms() {
         val db = dbHelper.writableDatabase
-        db.execSQL("INSERT INTO ${DatabaseHandler.TABLE_ROOM} (${DatabaseHandler.COLUMN_ROOM_NAME}, ${DatabaseHandler.COLUMN_NUMBER_OF_LIGHTS}) VALUES ('Living Room', 3)")
-        db.execSQL("INSERT INTO ${DatabaseHandler.TABLE_ROOM} (${DatabaseHandler.COLUMN_ROOM_NAME}, ${DatabaseHandler.COLUMN_NUMBER_OF_LIGHTS}) VALUES ('Bedroom', 2)")
-        db.execSQL("INSERT INTO ${DatabaseHandler.TABLE_ROOM} (${DatabaseHandler.COLUMN_ROOM_NAME}, ${DatabaseHandler.COLUMN_NUMBER_OF_LIGHTS}) VALUES ('Kitchen', 4)")
-        db.execSQL("INSERT INTO ${DatabaseHandler.TABLE_ROOM} (${DatabaseHandler.COLUMN_ROOM_NAME}, ${DatabaseHandler.COLUMN_NUMBER_OF_LIGHTS}) VALUES ('Bathroom', 1)")
-        db.execSQL("INSERT INTO ${DatabaseHandler.TABLE_ROOM} (${DatabaseHandler.COLUMN_ROOM_NAME}, ${DatabaseHandler.COLUMN_NUMBER_OF_LIGHTS}) VALUES ('Garage', 2)")
+        db.execSQL("INSERT INTO ${DatabaseHandler.TABLE_ROOM} (${DatabaseHandler.COLUMN_ROOM_NAME}) VALUES ('Living Room', 3)")
+        db.execSQL("INSERT INTO ${DatabaseHandler.TABLE_ROOM} (${DatabaseHandler.COLUMN_ROOM_NAME}) VALUES ('Bedroom', 2)")
+        db.execSQL("INSERT INTO ${DatabaseHandler.TABLE_ROOM} (${DatabaseHandler.COLUMN_ROOM_NAME}) VALUES ('Kitchen', 4)")
+        db.execSQL("INSERT INTO ${DatabaseHandler.TABLE_ROOM} (${DatabaseHandler.COLUMN_ROOM_NAME}) VALUES ('Bathroom', 1)")
+        db.execSQL("INSERT INTO ${DatabaseHandler.TABLE_ROOM} (${DatabaseHandler.COLUMN_ROOM_NAME}) VALUES ('Garage', 2)")
         db.close()
     }
 
@@ -273,7 +274,7 @@ class UserDAO(context:Context) {
             do {
                 val roomName = cursor.getString(0)
                 val numberOfLights = cursor.getInt(1)
-                roomList.add(RoomItem(roomName, numberOfLights))
+                roomList.add(RoomItem(roomName,numberOfLights))
             } while (cursor.moveToNext())
         }
 
@@ -286,7 +287,7 @@ class UserDAO(context:Context) {
         val lightList = mutableListOf<LightItem>()
         val db = dbHelper.readableDatabase
         val query = """
-        SELECT r.${DatabaseHandler.COLUMN_NAME_LIGHT}, r.${DatabaseHandler.COLUMN_PIN}, r.${DatabaseHandler.COLUMN_BRIGHTNESS},r.${DatabaseHandler.COLUMN_STATUS}
+        SELECT r.${DatabaseHandler.COLUMN_NAME_LIGHT}, r.${DatabaseHandler.COLUMN_PIN},r.${DatabaseHandler.COLUMN_STATUS}
         FROM ${DatabaseHandler.TABLE_LIGHT_BULB} r
         WHERE r.${DatabaseHandler.COLUMN_ROOM_NAME} = ?
     """
@@ -297,9 +298,9 @@ class UserDAO(context:Context) {
             do {
                 val nameLight = cursor.getString(0)
                 val pin = cursor.getString(1)
-                val brightness = cursor.getInt(2)
-                val status = cursor.getInt(3) == 1
-                lightList.add(LightItem(nameLight, pin, brightness, status))
+                //val brightness = cursor.getInt(2)
+                val status = cursor.getInt(2) == 1
+                lightList.add(LightItem(nameLight, pin, status))
             } while (cursor.moveToNext())
         }
 
@@ -313,7 +314,7 @@ class UserDAO(context:Context) {
         val values = ContentValues().apply {
             put(DatabaseHandler.COLUMN_NAME_LIGHT, light.name)
             put(DatabaseHandler.COLUMN_PIN, light.pin)
-            put(DatabaseHandler.COLUMN_BRIGHTNESS, light.brightness)
+            //put(DatabaseHandler.COLUMN_BRIGHTNESS, light.brightness)
             put(DatabaseHandler.COLUMN_STATUS, if (light.status) 1 else 0)
             put(DatabaseHandler.COLUMN_ROOM_NAME, name)
         }

@@ -35,6 +35,10 @@ class DetailRoom : AppCompatActivity() {
         var lightsCount = 0
 
         backButton.setOnClickListener {
+            val resultIntent = Intent()
+            resultIntent.putExtra("lightCount", lightsCount)
+            setResult(Activity.RESULT_OK, resultIntent)
+            Toast.makeText(this,"${lightsCount}",Toast.LENGTH_LONG).show()
             finish()
         }
 
@@ -43,7 +47,7 @@ class DetailRoom : AppCompatActivity() {
 
             val edtTen = dialogView.findViewById<EditText>(R.id.edtTenDen)
             val edtPin = dialogView.findViewById<EditText>(R.id.edtPin)
-            val edtBrightness = dialogView.findViewById<EditText>(R.id.edtDoSang)
+            //val edtBrightness = dialogView.findViewById<EditText>(R.id.edtDoSang)
             val edtStatus = dialogView.findViewById<EditText>(R.id.edtStatus)
             val btnAdd = dialogView.findViewById<Button>(R.id.button_add_light)
 
@@ -57,16 +61,16 @@ class DetailRoom : AppCompatActivity() {
                 btnAdd.setOnClickListener {
                     val ten = edtTen.text.toString().trim()
                     val pin = edtPin.text.toString().trim()
-                    val brightnessText = edtBrightness.text.toString().trim()
+                    //val brightnessText = edtBrightness.text.toString().trim()
                     val statusText = edtStatus.text.toString().trim()
 
-                    val brightness = brightnessText.toIntOrNull()
+                    //val brightness = brightnessText.toIntOrNull()
                     val status = statusText.toIntOrNull()
 
-                    if (ten.isBlank() || pin.isBlank() || brightness == null || status == null || brightness !in 0..1 || status !in 0..1) {
+                    if (ten.isBlank() || pin.isBlank()  || status == null  || status !in 0..1) {
                         Toast.makeText(this, "Please enter the correct information!", Toast.LENGTH_SHORT).show()
                     } else {
-                        val light = LightItem(ten, pin, brightness, status == 1)
+                        val light = LightItem(ten, pin, status == 1)
 
                         // Gọi insertLight truyền vào phòng nào đó (name), ví dụ:
                         if (userdao.insertLight(name.toString(), light)) {
@@ -103,7 +107,6 @@ class DetailRoom : AppCompatActivity() {
 
             edtTen.text = name
             edtPin.setText(pin)
-
 
             val dialog = AlertDialog.Builder(this) // nếu đang dùng Fragment
                 .setTitle("Update light")

@@ -14,7 +14,7 @@ class LightControlView @JvmOverloads constructor(
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
 
     private val switchLight: Switch
-    private val seekBarBrightness: SeekBar
+    //private val seekBarBrightness: SeekBar
     private val nameLight: TextView
     private val status: TextView
     private val icon: ImageView
@@ -24,7 +24,7 @@ class LightControlView @JvmOverloads constructor(
         LayoutInflater.from(context).inflate(R.layout.custom_light_control, this, true)
         icon = findViewById(R.id.icon)
         switchLight = findViewById(R.id.switchLight)
-        seekBarBrightness = findViewById(R.id.seekBarBrightness)
+        //seekBarBrightness = findViewById(R.id.seekBarBrightness)
         nameLight = findViewById(R.id.nameLight)
         status = findViewById(R.id.status)  //  Thêm vào tránh lỗi UninitializedPropertyAccessException
     }
@@ -33,25 +33,25 @@ class LightControlView @JvmOverloads constructor(
     fun setLightData(lightItem: LightItem) {
         nameLight.text = lightItem.name
         switchLight.isChecked = lightItem.status
-        seekBarBrightness.progress = lightItem.brightness
+        //seekBarBrightness.progress = lightItem.brightness
         status.text = if (lightItem.status) "ON" else "OFF"
 
         //  Ngăn chặn vòng lặp khi cập nhật UI
         switchLight.setOnCheckedChangeListener(null)
-        seekBarBrightness.setOnSeekBarChangeListener(null)
+        //seekBarBrightness.setOnSeekBarChangeListener(null)
 
         switchLight.setOnCheckedChangeListener { _, isChecked ->
             lightItem.status = isChecked
             status.text = if (isChecked) "ON" else "OFF"
         }
 
-        seekBarBrightness.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                if (fromUser) lightItem.brightness = progress
-            }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
-        })
+//        seekBarBrightness.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+//            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+//                if (fromUser) lightItem.brightness = progress
+//            }
+//
+//            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+//            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+//        })
     }
 }

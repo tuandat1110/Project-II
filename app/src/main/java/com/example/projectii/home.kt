@@ -5,6 +5,7 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -34,6 +35,7 @@ class home : Fragment() {
     private lateinit var adapter: RoomAdapter
     private val roomItems = mutableListOf<RoomItem>()
     private lateinit var detailRoomLauncher: ActivityResultLauncher<Intent>
+    private var selectedItem: RoomItem? = null  // Khai báo selectedItem toàn cục
 
     // TODO: Rename and change types of parameters
     private var param1: String? = null
@@ -56,15 +58,6 @@ class home : Fragment() {
     }
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment home.
-         */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
             home().apply {
@@ -78,48 +71,49 @@ class home : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-//        val btnClick = view.findViewById<Button>(R.id.btn)
-//        btnClick.setOnClickListener {
-//            Toast.makeText(requireContext(), "Button Clicked!", Toast.LENGTH_SHORT).show()
-//        }
-
-
         val roomListView = view.findViewById<ListView>(R.id.listView)
         val addButton = view.findViewById<Button>(R.id.add)
-        val email1 = arguments?.getString("email") ?: ""  //email lay dc tu khi dang nhap
+        val email1 = arguments?.getString("email") ?: ""  // email lấy từ khi đăng nhập
         var userdao = UserDAO(requireContext())
         val username: String = userdao.getUsernameByEmail(email1).toString()
-        var lightCount = 0
 
-        detailRoomLauncher = registerForActivityResult(
-            ActivityResultContracts.StartActivityForResult()
-        ) { result ->
+        detailRoomLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 val data = result.data
-                lightCount = data?.getIntExtra("lightCount", 0) ?: 0
+                val returnedLightCount = data?.getIntExtra("lightCount", 0) ?: 0
+
+                // Cập nhật lại số lượng bóng đèn cho phòng tương ứng
+                selectedItem?.let {
+                    it.numberOfLights = returnedLightCount  // Cập nhật số lượng bóng đèn cho phòng
+                }
+
+                // Cập nhật lại danh sách room từ database
+                val updatedRooms = userdao.getRoomsByUsername(username)
+                roomItems.clear()
+                roomItems.addAll(updatedRooms)
+                adapter.notifyDataSetChanged()  // Cập nhật giao diện
             }
         }
 
         addButton.setOnClickListener {
             val dialogView = layoutInflater.inflate(R.layout.dialog_add_room, null)
             val edtTen = dialogView.findViewById<EditText>(R.id.edtTenPhong)
-            val edtSoLuong = dialogView.findViewById<EditText>(R.id.edtSoLuongBong)
             val btnAdd = dialogView.findViewById<Button>(R.id.button_add_room)
             val dialog = AlertDialog.Builder(requireContext())
                 .setTitle("Add room")
                 .setView(dialogView)
                 .setNegativeButton("Cancel", null)
                 .create()
+
             dialog.setOnShowListener {
                 btnAdd.setOnClickListener {
                     val ten = edtTen.text.toString().trim()
-                    val soLuong = edtSoLuong.text.toString().toIntOrNull()
 
-                    if (ten.isBlank() || soLuong == null || soLuong <= 0) {
+                    if (ten.isBlank()) {
                         Toast.makeText(requireContext(), "Please enter the correct information!", Toast.LENGTH_SHORT).show()
                     } else {
                         // Thêm vào DB trong background thread
-                        if(userdao.insertRoom(username, RoomItem(ten,soLuong))){
+                        if(userdao.insertRoom(username, RoomItem(ten, 0))){
                             Toast.makeText(requireContext(),"Add room successfully!",Toast.LENGTH_SHORT).show()
                             val updatedList = userdao.getRoomsByUsername(username)
                             roomItems.clear()
@@ -132,19 +126,21 @@ class home : Fragment() {
                     }
                 }
             }
-           dialog.show()
+            dialog.show()
 
             val negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
             negativeButton.setTextColor(Color.BLACK)
         }
 
         roomListView.setOnItemClickListener { _, _, position, _ ->
-            val selectedItem = roomListView.adapter.getItem(position) as? RoomItem
+            selectedItem = roomListView.adapter.getItem(position) as? RoomItem
             if (selectedItem != null) {
                 val intent = Intent(requireContext(), DetailRoom::class.java)
-                intent.putExtra("roomName", selectedItem.name)
-                intent.putExtra("lightCount", selectedItem.numberOfLights)
-                detailRoomLauncher.launch(intent)  //  sử dụng launcher
+                intent.putExtra("roomName", selectedItem?.name)
+                intent.putExtra("lightCount", selectedItem?.numberOfLights ?: 0)  // Truyền lightCount nếu cần
+                detailRoomLauncher.launch(intent)  // Sử dụng launcher để mở DetailRoom Activity
+            } else {
+                Log.e("Error", "Selected room item is null")
             }
         }
 
@@ -152,10 +148,7 @@ class home : Fragment() {
         roomItems.addAll(userdao.getRoomsByUsername(username))
 
         // Kết nối ListView với Adapter
-        adapter = RoomAdapter(requireContext(), roomItems,username,lightCount)
+        adapter = RoomAdapter(requireContext(), roomItems, username)
         roomListView.adapter = adapter
-
     }
-
-
 }

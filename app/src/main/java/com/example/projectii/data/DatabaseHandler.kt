@@ -9,7 +9,7 @@ class DatabaseHandler(context: Context) : SQLiteOpenHelper(context, DB_NAME, nul
     companion object {
         // Thông tin Database
         const val DB_NAME = "Project-II-update"    // Tên database
-        const val DB_VERSION = 4                   // Phiên bản database
+        const val DB_VERSION = 7                   // Phiên bản database
 
         // Thông tin bảng tài khoản
         const val TABLE_ACCOUNT = "Account"
@@ -28,7 +28,7 @@ class DatabaseHandler(context: Context) : SQLiteOpenHelper(context, DB_NAME, nul
         const val TABLE_LIGHT_BULB = "LightBulb"
         const val COLUMN_NAME_LIGHT = "NameLight"
         const val COLUMN_PIN = "Pin"
-        const val COLUMN_BRIGHTNESS = "Brightness"
+        //const val COLUMN_BRIGHTNESS = "Brightness"
         const val COLUMN_STATUS = "Status"
 
         // Thông tin bảng set timer
@@ -72,7 +72,7 @@ class DatabaseHandler(context: Context) : SQLiteOpenHelper(context, DB_NAME, nul
         val sqlRoom = """
             CREATE TABLE IF NOT EXISTS $TABLE_ROOM (
                 $COLUMN_ROOM_NAME VARCHAR(100) PRIMARY KEY,
-                $COLUMN_NUMBER_OF_LIGHTS INT
+                $COLUMN_NUMBER_OF_LIGHTS INTEGER
             );
         """.trimIndent()
 
@@ -81,7 +81,7 @@ class DatabaseHandler(context: Context) : SQLiteOpenHelper(context, DB_NAME, nul
             CREATE TABLE IF NOT EXISTS $TABLE_LIGHT_BULB (
                 $COLUMN_NAME_LIGHT VARCHAR(100),
                 $COLUMN_PIN VARCHAR(30),
-                $COLUMN_BRIGHTNESS INT,
+                
                 $COLUMN_STATUS BOOLEAN,
                 $COLUMN_ROOM_NAME VARCHAR(100),
                 PRIMARY KEY ($COLUMN_NAME_LIGHT, $COLUMN_ROOM_NAME),

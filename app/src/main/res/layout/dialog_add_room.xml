@@ -13,14 +13,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <EditText
-        android:id="@+id/edtSoLuongBong"
-        android:hint="Number of lights"
-        android:textColorHint="@color/black"
-        android:textSize="25sp"
-        android:inputType="number"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+<!--    <EditText-->
+<!--        android:id="@+id/edtSoLuongBong"-->
+<!--        android:hint="Number of lights"-->
+<!--        android:textColorHint="@color/black"-->
+<!--        android:textSize="25sp"-->
+<!--        android:inputType="number"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content" />-->
 
 
     <androidx.appcompat.widget.AppCompatButton
