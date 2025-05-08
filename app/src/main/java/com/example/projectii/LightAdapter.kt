@@ -1,6 +1,5 @@
 package com.example.projectii
 
-import android.app.AlertDialog
 import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
@@ -8,16 +7,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.ImageView
-import android.widget.SeekBar
 import android.widget.Switch
 import android.widget.TextView
-import android.widget.Toast
-import com.example.projectii.RoomAdapter.ViewHolder
 import com.example.projectii.data.UserDAO
 import java.net.HttpURLConnection
 import java.net.URL
-
-class LightAdapter(private val context: Context, private val lights: MutableList<LightItem>,private val tenPhong:String) : BaseAdapter() {
+class LightAdapter(private val context: Context, private val lights: MutableList<LightItem>, private val tenPhong: String) : BaseAdapter() {
 
     override fun getCount(): Int = lights.size
 
@@ -34,7 +29,6 @@ class LightAdapter(private val context: Context, private val lights: MutableList
             viewHolder = ViewHolder().apply {
                 icon = item.findViewById(R.id.icon)
                 switchLight = item.findViewById(R.id.switchLight)
-//                seekBarBrightness = item.findViewById(R.id.seekBarBrightness)
                 nameLight = item.findViewById(R.id.nameLight)
                 status = item.findViewById(R.id.status)
             }
@@ -44,60 +38,28 @@ class LightAdapter(private val context: Context, private val lights: MutableList
             viewHolder = item.tag as ViewHolder
         }
 
-        // Cập nhật dữ liệu cho viewHolder
-        viewHolder.nameLight.text = lights[position].name
-        viewHolder.switchLight.isChecked = lights[position].status
-        viewHolder.status.text = if (lights[position].status) "ON" else "OFF"
+        val light = lights[position]
 
+        viewHolder.nameLight.text = light.name
         viewHolder.switchLight.setOnCheckedChangeListener(null)
-      //  viewHolder.seekBarBrightness.setOnSeekBarChangeListener(null)
+        viewHolder.switchLight.isChecked = light.status
+        viewHolder.status.text = if (light.status) "ON" else "OFF"
 
         viewHolder.switchLight.setOnCheckedChangeListener { _, isChecked ->
-            lights[position].status = isChecked
-            viewHolder.status.text = if (isChecked) "ON" else "OFF"
-            if (isChecked) {
-                // Switch đang ON: gửi lệnh bật đèn
-                sendCommand(lights[position].pin,"on")
-            } else {
-                // Switch đang OFF: gửi lệnh tắt đèn
-                sendCommand(lights[position].pin,"off")
+            if (light.status != isChecked) {
+                light.status = isChecked
+                viewHolder.status.text = if (isChecked) "ON" else "OFF"
+                sendCommand(light.ip, light.pin, if (isChecked) "on" else "off")
+                UserDAO(context).updateState(light.name, isChecked)
             }
         }
-
-//        viewHolder.seekBarBrightness.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-//            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-//                if (fromUser) lights[position].brightness = progress
-//            }
-//
-//            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-//            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
-//        })
-
-
-//        viewHolder.icon.setOnClickListener {
-//            AlertDialog.Builder(context)
-//                .setTitle("Delete light")
-//                .setMessage("Are you sure that you want to delete '${lights[position].name}'?")
-//                .setPositiveButton("OK") { dialog, which ->
-//                    // Xóa phòng khỏi cơ sở dữ liệu và danh sách
-//                    if (UserDAO(context).deleteLight(tenPhong, lights[position].name)) {
-//                        // Xóa phòng khỏi danh sách
-//                        lights.removeAt(position)
-//                        notifyDataSetChanged()
-//                        Toast.makeText(context, "Deleted!", Toast.LENGTH_SHORT).show()
-//                    } else {
-//                        Toast.makeText(context, "Failed to delete!", Toast.LENGTH_SHORT).show()
-//                    }
-//                }
-//                .setNegativeButton("Cancel", null)
-//                .show()
-//        }
 
         return item
     }
 
-    fun sendCommand(pin: String, state: String) {
-        val url = URL("http://192.168.1.100/control?pin=$pin&state=$state")
+    private fun sendCommand(ip: String, pin: String, state: String) {
+        if (ip.isBlank()) return
+        val url = URL("http://$ip/control?pin=$pin&state=$state")
 
         Thread {
             try {
@@ -109,18 +71,15 @@ class LightAdapter(private val context: Context, private val lights: MutableList
                     }
                 }
             } catch (e: Exception) {
-                e.printStackTrace()
+                Log.e("ESP_ERROR", "Failed to send command: ${e.message}")
             }
         }.start()
     }
 
     class ViewHolder {
         lateinit var switchLight: Switch
-        //lateinit var seekBarBrightness: SeekBar
         lateinit var nameLight: TextView
         lateinit var status: TextView
         lateinit var icon: ImageView
     }
 }
-
-

@@ -47,7 +47,7 @@ class DetailRoom : AppCompatActivity() {
 
             val edtTen = dialogView.findViewById<EditText>(R.id.edtTenDen)
             val edtPin = dialogView.findViewById<EditText>(R.id.edtPin)
-            //val edtBrightness = dialogView.findViewById<EditText>(R.id.edtDoSang)
+            val edtIP = dialogView.findViewById<EditText>(R.id.edtIP)
             val edtStatus = dialogView.findViewById<EditText>(R.id.edtStatus)
             val btnAdd = dialogView.findViewById<Button>(R.id.button_add_light)
 
@@ -61,35 +61,61 @@ class DetailRoom : AppCompatActivity() {
                 btnAdd.setOnClickListener {
                     val ten = edtTen.text.toString().trim()
                     val pin = edtPin.text.toString().trim()
-                    //val brightnessText = edtBrightness.text.toString().trim()
+                    val ip = edtIP.text.toString().trim()
                     val statusText = edtStatus.text.toString().trim()
 
-                    //val brightness = brightnessText.toIntOrNull()
                     val status = statusText.toIntOrNull()
 
-                    if (ten.isBlank() || pin.isBlank()  || status == null  || status !in 0..1) {
-                        Toast.makeText(this, "Please enter the correct information!", Toast.LENGTH_SHORT).show()
-                    } else {
-                        val light = LightItem(ten, pin, status == 1)
-
-                        // Gọi insertLight truyền vào phòng nào đó (name), ví dụ:
-                        if (userdao.insertLight(name.toString(), light)) {
-                            Toast.makeText(this, "Add light successfully!", Toast.LENGTH_SHORT).show()
-                            lightsCount = userdao.countLights(name.toString())
-                            lightItems.clear()
-                            lightItems.addAll(userdao.getLightByNameRoom(name.toString()))
-                            adapter.notifyDataSetChanged()
-                            dialog.dismiss()
-                        } else {
-                            Toast.makeText(this, "Light name existed in this room", Toast.LENGTH_SHORT).show()
+                    // Kiểm tra chuỗi IP có đúng định dạng x.x.x.x không
+                    fun isValidIP(ip: String): Boolean {
+                        val parts = ip.split(".")
+                        if (parts.size != 4) return false
+                        return parts.all {
+                            it.toIntOrNull()?.let { num -> num in 0..255 } ?: false
                         }
+                    }
+
+                    // Kiểm tra đầu vào
+                    if (ten.isEmpty() || pin.isEmpty() || ip.isEmpty() || status == null || status !in 0..1) {
+                        Toast.makeText(
+                            this,
+                            "Please enter all fields correctly!",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        return@setOnClickListener
+                    }
+
+                    if (!pin.all { it.isDigit() }) {
+                        Toast.makeText(this, "PIN must be a number!", Toast.LENGTH_SHORT).show()
+                        return@setOnClickListener
+                    }
+
+                    if (!isValidIP(ip)) {
+                        Toast.makeText(this, "Invalid IP address!", Toast.LENGTH_SHORT).show()
+                        return@setOnClickListener
+                    }
+
+                    val light = LightItem(ten, pin, ip, status == 1)
+
+                    if (userdao.insertLight(name.toString(), light)) {
+                        Toast.makeText(this, "Light added successfully!", Toast.LENGTH_SHORT).show()
+                        lightsCount = userdao.countLights(name.toString())
+                        lightItems.clear()
+                        lightItems.addAll(userdao.getLightByNameRoom(name.toString()))
+                        adapter.notifyDataSetChanged()
+                        dialog.dismiss()
+                    } else {
+                        Toast.makeText(
+                            this,
+                            "Light name already exists in this room!",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
             }
 
             dialog.show()
-            val negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
-            negativeButton.setTextColor(Color.BLACK)
+            dialog.getButton(AlertDialog.BUTTON_NEGATIVE)?.setTextColor(Color.BLACK)
         }
 
         lightListView.setOnItemClickListener { _, _, position, _ ->
@@ -97,6 +123,7 @@ class DetailRoom : AppCompatActivity() {
             val dialogView = layoutInflater.inflate(R.layout.dialog_update_light, null)
             val edtTen = dialogView.findViewById<TextView>(R.id.edtTenDen)
             val edtPin = dialogView.findViewById<EditText>(R.id.edtPin)
+            val edtIP = dialogView.findViewById<EditText>(R.id.edtIP)
             val btnUpdate = dialogView.findViewById<Button>(R.id.button_update_light)
             val btnDelete = dialogView.findViewById<Button>(R.id.button_delete_light)
 
@@ -104,9 +131,11 @@ class DetailRoom : AppCompatActivity() {
             val selectedLight = lightItems[position]
             val lightName = selectedLight.name
             val pin = selectedLight.pin
+            val ip = selectedLight.ip
 
-            edtTen.text = name
+            edtTen.text = lightName
             edtPin.setText(pin)
+            edtIP.setText(ip)
 
             val dialog = AlertDialog.Builder(this) // nếu đang dùng Fragment
                 .setTitle("Update light")
@@ -116,15 +145,41 @@ class DetailRoom : AppCompatActivity() {
 
             dialog.setOnShowListener {
                 btnUpdate.setOnClickListener {
-                    val newPin = edtPin.text.toString()
-                    if(userdao.updateLight(lightName,newPin) && newPin != pin){
-                        Toast.makeText(this, "Update succesfully!", Toast.LENGTH_SHORT).show()
+                    val newPin = edtPin.text.toString().trim()
+                    val newIP = edtIP.text.toString().trim()
+
+                    // Kiểm tra PIN là số
+                    if (!newPin.all { it.isDigit() }) {
+                        Toast.makeText(this, "PIN must be a number!", Toast.LENGTH_SHORT).show()
+                        return@setOnClickListener
+                    }
+
+                    // Kiểm tra định dạng IP
+                    fun isValidIP(ip: String): Boolean {
+                        val parts = ip.split(".")
+                        if (parts.size != 4) return false
+                        return parts.all {
+                            it.toIntOrNull()?.let { num -> num in 0..255 } ?: false
+                        }
+                    }
+
+                    if (!isValidIP(newIP)) {
+                        Toast.makeText(this, "Invalid IP address!", Toast.LENGTH_SHORT).show()
+                        return@setOnClickListener
+                    }
+
+                    // Chỉ update nếu có sự thay đổi
+                    if ((newPin != pin || newIP != ip) && userdao.updateLight(lightName, newPin, newIP)) {
+                        Toast.makeText(this, "Update successfully!", Toast.LENGTH_SHORT).show()
                         lightItems.clear()
                         lightItems.addAll(userdao.getLightByNameRoom(name.toString()))
                         adapter.notifyDataSetChanged()
                         dialog.dismiss()
+                    } else {
+                        Toast.makeText(this, "No changes or update failed!", Toast.LENGTH_SHORT).show()
                     }
                 }
+
 
                 btnDelete.setOnClickListener {
                     // Xử lý xóa đèn tại đây, ví dụ:

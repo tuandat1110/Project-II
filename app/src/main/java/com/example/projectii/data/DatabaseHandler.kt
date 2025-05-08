@@ -9,7 +9,7 @@ class DatabaseHandler(context: Context) : SQLiteOpenHelper(context, DB_NAME, nul
     companion object {
         // Thông tin Database
         const val DB_NAME = "Project-II-update"    // Tên database
-        const val DB_VERSION = 7                   // Phiên bản database
+        const val DB_VERSION = 8                   // Phiên bản database
 
         // Thông tin bảng tài khoản
         const val TABLE_ACCOUNT = "Account"
@@ -30,6 +30,7 @@ class DatabaseHandler(context: Context) : SQLiteOpenHelper(context, DB_NAME, nul
         const val COLUMN_PIN = "Pin"
         //const val COLUMN_BRIGHTNESS = "Brightness"
         const val COLUMN_STATUS = "Status"
+        const val COLUMN_IP = "IP"
 
         // Thông tin bảng set timer
         const val TABLE_SET_TIMER = "SetTimer"
@@ -81,14 +82,13 @@ class DatabaseHandler(context: Context) : SQLiteOpenHelper(context, DB_NAME, nul
             CREATE TABLE IF NOT EXISTS $TABLE_LIGHT_BULB (
                 $COLUMN_NAME_LIGHT VARCHAR(100),
                 $COLUMN_PIN VARCHAR(30),
-                
+                $COLUMN_IP VARCHAR(40),
                 $COLUMN_STATUS BOOLEAN,
                 $COLUMN_ROOM_NAME VARCHAR(100),
                 PRIMARY KEY ($COLUMN_NAME_LIGHT, $COLUMN_ROOM_NAME),
                 FOREIGN KEY ($COLUMN_ROOM_NAME) REFERENCES $TABLE_ROOM($COLUMN_ROOM_NAME) ON DELETE CASCADE
             );
         """.trimIndent()
-
 
         // 5. Tạo bảng SetTimer, tham chiếu đến Account và LightBulb
         val sqlSetTimer = """

@@ -6,14 +6,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
-import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.core.content.ContentProviderCompat.requireContext
-import androidx.recyclerview.widget.RecyclerView
 import com.example.projectii.data.UserDAO
-import java.util.zip.Inflater
 
 class RoomAdapter(private val context: Context, private val rooms: MutableList<RoomItem>, private val username: String) : BaseAdapter() {
 
@@ -32,7 +28,7 @@ class RoomAdapter(private val context: Context, private val rooms: MutableList<R
             viewHolder = ViewHolder().apply {
                 icon = item.findViewById(R.id.icon)
                 name = item.findViewById(R.id.nameRoom)
-                numberOfLights = item.findViewById(R.id.number_of_lights)
+                //numberOfLights = item.findViewById(R.id.number_of_lights)
                 deleteBtn = item.findViewById(R.id.deleteText)
             }
             item.tag = viewHolder
@@ -43,7 +39,7 @@ class RoomAdapter(private val context: Context, private val rooms: MutableList<R
 
         // Cập nhật dữ liệu cho viewHolder
         viewHolder.name.text = rooms[position].name
-        viewHolder.numberOfLights.text = "Number of lights: ${rooms[position].numberOfLights}"
+        //viewHolder.numberOfLights.text = "Number of lights: ${rooms[position].numberOfLights}"
         //Xu ly doan xoa phong nay sau
         viewHolder.deleteBtn.setOnClickListener {
             AlertDialog.Builder(context)
@@ -70,7 +66,7 @@ class RoomAdapter(private val context: Context, private val rooms: MutableList<R
     class ViewHolder {
         lateinit var icon: ImageView
         lateinit var name: TextView
-        lateinit var numberOfLights: TextView
+        //lateinit var numberOfLights: TextView
         lateinit var deleteBtn: TextView
     }
 }

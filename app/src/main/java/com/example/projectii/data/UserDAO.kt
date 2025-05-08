@@ -5,7 +5,7 @@ import android.content.Context
 import com.example.projectii.LightItem
 import com.example.projectii.RoomItem
 
-class UserDAO(context:Context) {
+class UserDAO(context: Context) {
     private val dbHelper = DatabaseHandler(context)
 
     fun insertUser(user: UserData): Boolean {
@@ -287,7 +287,7 @@ class UserDAO(context:Context) {
         val lightList = mutableListOf<LightItem>()
         val db = dbHelper.readableDatabase
         val query = """
-        SELECT r.${DatabaseHandler.COLUMN_NAME_LIGHT}, r.${DatabaseHandler.COLUMN_PIN},r.${DatabaseHandler.COLUMN_STATUS}
+        SELECT r.${DatabaseHandler.COLUMN_NAME_LIGHT}, r.${DatabaseHandler.COLUMN_PIN},r.${DatabaseHandler.COLUMN_IP},r.${DatabaseHandler.COLUMN_STATUS}
         FROM ${DatabaseHandler.TABLE_LIGHT_BULB} r
         WHERE r.${DatabaseHandler.COLUMN_ROOM_NAME} = ?
     """
@@ -298,9 +298,9 @@ class UserDAO(context:Context) {
             do {
                 val nameLight = cursor.getString(0)
                 val pin = cursor.getString(1)
-                //val brightness = cursor.getInt(2)
-                val status = cursor.getInt(2) == 1
-                lightList.add(LightItem(nameLight, pin, status))
+                val ip = cursor.getString(2)
+                val status = cursor.getInt(3) == 1
+                lightList.add(LightItem(nameLight, pin,ip, status))
             } while (cursor.moveToNext())
         }
 
@@ -314,7 +314,7 @@ class UserDAO(context:Context) {
         val values = ContentValues().apply {
             put(DatabaseHandler.COLUMN_NAME_LIGHT, light.name)
             put(DatabaseHandler.COLUMN_PIN, light.pin)
-            //put(DatabaseHandler.COLUMN_BRIGHTNESS, light.brightness)
+            put(DatabaseHandler.COLUMN_IP, light.ip)
             put(DatabaseHandler.COLUMN_STATUS, if (light.status) 1 else 0)
             put(DatabaseHandler.COLUMN_ROOM_NAME, name)
         }
@@ -333,8 +333,16 @@ class UserDAO(context:Context) {
             arrayOf(roomName, username)
         )
 
-        // Nếu liên kết đã bị xóa
+        // Nếu liên kết đã bị xóa, tiếp tục xóa bóng đèn và phòng
         val roomRows = if (linkRows > 0) {
+            // Xóa bóng đèn trong phòng
+            db.delete(
+                DatabaseHandler.TABLE_LIGHT_BULB,
+                "${DatabaseHandler.COLUMN_ROOM_NAME} = ?",
+                arrayOf(roomName)
+            )
+
+            // Xóa phòng
             db.delete(
                 DatabaseHandler.TABLE_ROOM,
                 "${DatabaseHandler.COLUMN_ROOM_NAME} = ?",
@@ -373,20 +381,43 @@ class UserDAO(context:Context) {
         cursor.close()
         return count
     }
-    fun updateLight(lightName: String, pin: String?): Boolean {
+    fun updateLight(lightName: String, pin: String?, ip: String?): Boolean {
         val db = dbHelper.writableDatabase
-        val contentValues = ContentValues().apply {
-            put(DatabaseHandler.COLUMN_PIN, pin)
-        }
+        val contentValues = ContentValues()
+
+        // Chỉ thêm vào nếu giá trị không null
+        pin?.let { contentValues.put(DatabaseHandler.COLUMN_PIN, it) }
+        ip?.let { contentValues.put(DatabaseHandler.COLUMN_IP, it) }
+
         val rowsAffected = db.update(
-            "${DatabaseHandler.TABLE_LIGHT_BULB}",
+            DatabaseHandler.TABLE_LIGHT_BULB,
             contentValues,
             "${DatabaseHandler.COLUMN_NAME_LIGHT} = ?",
             arrayOf(lightName)
         )
+
         db.close()
         return rowsAffected > 0
     }
+
+    fun updateState(lightName: String, state: Boolean): Boolean {
+        val db = dbHelper.writableDatabase
+        val contentValues = ContentValues().apply {
+            put(DatabaseHandler.COLUMN_STATUS, if (state) 1 else 0) // true = 1, false = 0
+        }
+
+        val rowsAffected = db.update(
+            DatabaseHandler.TABLE_LIGHT_BULB,
+            contentValues,
+            "${DatabaseHandler.COLUMN_NAME_LIGHT} = ?",
+            arrayOf(lightName)
+        )
+
+        db.close()
+        return rowsAffected > 0
+    }
+
+
 
 
 }

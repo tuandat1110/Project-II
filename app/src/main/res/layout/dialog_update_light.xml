@@ -21,6 +21,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
+    <EditText
+        android:id="@+id/edtIP"
+        android:hint="IP address"
+        android:textColorHint="@color/black"
+        android:textSize="25sp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <!-- Đặt cả nút Update và Delete vào LinearLayout ngang -->
     <LinearLayout
         android:orientation="horizontal"

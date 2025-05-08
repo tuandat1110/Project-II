@@ -7,6 +7,7 @@
     android:background="@drawable/login_background"
     android:padding="16dp">
 
+    <!-- Icon phòng -->
     <ImageView
         android:id="@+id/icon"
         android:layout_width="48dp"
@@ -17,35 +18,23 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintVertical_bias="0.5" />
 
+    <!-- Tên phòng (căn giữa với icon) -->
     <TextView
         android:id="@+id/nameRoom"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="Kitchen"
         android:textSize="22sp"
         android:textColor="@android:color/white"
         android:textStyle="bold"
-        app:layout_constraintStart_toEndOf="@id/icon"
-        app:layout_constraintTop_toTopOf="parent"
         android:layout_marginStart="16dp"
-        app:layout_constraintBottom_toTopOf="@id/status"
-        app:layout_constraintVertical_bias="0.3"
+        app:layout_constraintStart_toEndOf="@id/icon"
+        app:layout_constraintTop_toTopOf="@id/icon"
+        app:layout_constraintBottom_toBottomOf="@id/icon"
+        app:layout_constraintEnd_toStartOf="@id/deleteText"
         tools:ignore="NotSibling" />
 
-    <TextView
-        android:id="@+id/number_of_lights"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="The number of lights : "
-        android:textSize="16sp"
-        android:textColor="@android:color/white"
-        app:layout_constraintStart_toEndOf="@id/icon"
-        app:layout_constraintTop_toBottomOf="@id/nameRoom"
-        android:layout_marginStart="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintVertical_bias="0.7"
-        tools:ignore="NotSibling" />
-
+    <!-- Nút Delete -->
     <TextView
         android:id="@+id/deleteText"
         android:layout_width="wrap_content"
@@ -55,10 +44,8 @@
         android:textColor="@color/black"
         android:background="@drawable/rounded_corner1"
         android:padding="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@id/number_of_lights"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.833" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

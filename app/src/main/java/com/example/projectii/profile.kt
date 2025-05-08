@@ -2,7 +2,6 @@ package com.example.projectii
 
 import android.content.Intent
 import android.os.Bundle
-import android.provider.Contacts
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -13,7 +12,6 @@ import android.widget.TextView
 import android.widget.Toast
 import com.example.projectii.data.User
 import com.example.projectii.data.UserDAO
-import org.w3c.dom.Text
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
