@@ -38,7 +38,7 @@ class DetailRoom : AppCompatActivity() {
             val resultIntent = Intent()
             resultIntent.putExtra("lightCount", lightsCount)
             setResult(Activity.RESULT_OK, resultIntent)
-            Toast.makeText(this,"${lightsCount}",Toast.LENGTH_LONG).show()
+            //Toast.makeText(this,"${lightsCount}",Toast.LENGTH_LONG).show()
             finish()
         }
 
