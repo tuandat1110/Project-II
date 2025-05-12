@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -8,6 +7,7 @@
     android:padding="20dp"
     tools:context=".setting">
 
+    <!-- Tiêu đề -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -16,8 +16,7 @@
         android:textStyle="bold"
         android:textColor="@color/white"
         android:textSize="30sp"
-        android:paddingBottom="15dp"
-      />
+        android:paddingBottom="15dp" />
 
     <!-- Label chọn hẹn giờ -->
     <TextView
@@ -27,89 +26,115 @@
         android:textSize="25sp"
         android:paddingBottom="10dp"/>
 
+    <!-- Select Room -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@drawable/button_border1"
+        android:padding="10dp"
+        android:layout_marginBottom="15dp">
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/home_icon"
+            android:layout_marginEnd="10dp"/>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <Spinner
+                android:id="@+id/selectRoom"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Select the room"
+                android:textColor="@color/white"
+                android:textSize="17sp"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Select Light -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@drawable/button_border1"
+        android:padding="10dp"
+        android:layout_marginBottom="15dp">
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/lightbulb_icon"
+            android:layout_marginEnd="10dp"/>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <Spinner
+                android:id="@+id/selectLight"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Select the light"
+                android:textColor="@color/white"
+                android:textSize="17sp"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Select On/Off -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
         android:padding="10dp"
         android:background="@drawable/button_border1"
         android:layout_marginBottom="15dp">
 
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/power_icon"
+            android:layout_marginEnd="10dp"/>
+
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
+            android:orientation="vertical">
 
-            <!-- Icon -->
-            <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:src="@drawable/home_icon"
-                android:layout_marginRight="10dp"/>
+            <Spinner
+                android:id="@+id/selectState"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
 
-            <!-- Chọn đèn -->
-            <LinearLayout
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <Spinner
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Select the room"
-                    android:textColor="@color/white"
-                    android:textSize="17sp"/>
-            </LinearLayout>
+                android:text="Select On / Off"
+                android:textColor="@color/white"
+                android:textSize="17sp"/>
         </LinearLayout>
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="10dp"
-        android:background="@drawable/button_border1"
-        android:layout_marginBottom="15dp">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
-
-            <!-- Icon -->
-            <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:src="@drawable/lightbulb_icon"
-                android:layout_marginRight="10dp"/>
-
-            <!-- Chọn đèn -->
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <Spinner
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Select the light"
-                    android:textColor="@color/white"
-                    android:textSize="17sp"/>
-            </LinearLayout>
-        </LinearLayout>
-    </LinearLayout>
-
-    <!-- Chọn thời gian -->
+    <!-- Time Picker -->
     <TimePicker
         android:id="@+id/timePicker"
         android:layout_width="wrap_content"
@@ -117,34 +142,12 @@
         android:timePickerMode="spinner"
         android:layout_gravity="center_horizontal"/>
 
-    <TextView
-        android:id="@+id/txtDateTime"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Chưa chọn"
-        android:textSize="18sp"
-        android:textColor="@color/white"
-        android:layout_gravity="center_horizontal"
-        android:padding="10dp"/>
-
-
-    <!-- Button chọn ngày & giờ -->
+    <!-- Button -->
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnSelectDateTime"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Set time"
-        android:layout_gravity="center_horizontal"
-        android:background="@drawable/rounded_corner1"
-        android:textColor="@color/black"
-        android:padding="10dp"
-        android:layout_marginTop="10dp"/>
-
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btnSave"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Save"
         android:layout_gravity="center_horizontal"
         android:background="@drawable/rounded_corner1"
         android:textColor="@color/black"

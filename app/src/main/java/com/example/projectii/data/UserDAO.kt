@@ -4,8 +4,12 @@ import android.content.ContentValues
 import android.content.Context
 import com.example.projectii.LightItem
 import com.example.projectii.RoomItem
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class UserDAO(context: Context) {
+    val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
     private val dbHelper = DatabaseHandler(context)
 
     fun insertUser(user: UserData): Boolean {
@@ -417,6 +421,20 @@ class UserDAO(context: Context) {
         return rowsAffected > 0
     }
 
+    fun addSetTimer(username: String, nameRoom: String, setTime: Date, activeTime: Date, state: Boolean): Boolean {
+        val db = dbHelper.writableDatabase
+        val values = ContentValues().apply {
+            put(DatabaseHandler.COLUMN_USERNAME, username)
+            put(DatabaseHandler.COLUMN_NAME_LIGHT, nameRoom)
+            put(DatabaseHandler.COLUMN_SET_TIME, dateFormat.format(setTime))       // Format chuẩn ISO 8601
+            put(DatabaseHandler.COLUMN_ACTIVE_TIME, dateFormat.format(activeTime))
+            put(DatabaseHandler.COLUMN_TOGGLE_STATUS, if (state) 1 else 0)          // SQLite không có kiểu BOOLEAN thực, nên dùng 0/1
+        }
+
+        val result = db.insert(DatabaseHandler.TABLE_SET_TIMER, null, values)
+        db.close()
+        return result != -1L
+    }
 
 
 
