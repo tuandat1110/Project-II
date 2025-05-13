@@ -12,6 +12,8 @@ import android.widget.TextView
 import com.example.projectii.data.UserDAO
 import java.net.HttpURLConnection
 import java.net.URL
+import java.net.URLEncoder
+
 class LightAdapter(private val context: Context, private val lights: MutableList<LightItem>, private val tenPhong: String) : BaseAdapter() {
 
     override fun getCount(): Int = lights.size
@@ -49,7 +51,7 @@ class LightAdapter(private val context: Context, private val lights: MutableList
             if (light.status != isChecked) {
                 light.status = isChecked
                 viewHolder.status.text = if (isChecked) "ON" else "OFF"
-                sendCommand(light.ip, light.pin, if (isChecked) "on" else "off")
+                sendCommand(light.ip, light.pin, if (isChecked) "on" else "off",null,1)
                 UserDAO(context).updateState(light.name, isChecked)
             }
         }
@@ -57,9 +59,14 @@ class LightAdapter(private val context: Context, private val lights: MutableList
         return item
     }
 
-    private fun sendCommand(ip: String, pin: String, state: String) {
+    private fun sendCommand(ip: String, pin: String, state: String, time: String?, mode: Int) {
         if (ip.isBlank()) return
-        val url = URL("http://$ip/control?pin=$pin&state=$state")
+        val encodedTime = time?.let { URLEncoder.encode(it, "UTF-8") } ?: ""
+        val url = if (mode == 1) {
+            URL("http://$ip/control?pin=$pin&state=$state&mode=1")
+        } else {
+            URL("http://$ip/control?pin=$pin&state=$state&time=$encodedTime&mode=2")
+        }
 
         Thread {
             try {

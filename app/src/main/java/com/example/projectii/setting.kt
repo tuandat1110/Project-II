@@ -14,6 +14,9 @@ import android.widget.Spinner
 import android.widget.TimePicker
 import android.widget.Toast
 import com.example.projectii.data.UserDAO
+import java.net.HttpURLConnection
+import java.net.URL
+import java.net.URLEncoder
 import java.util.Calendar
 
 /**
@@ -84,6 +87,8 @@ class setting : Fragment() {
             var dao = UserDAO(requireContext())
             username = dao.getUsernameByEmail(email).toString()
 
+            val lightItem: LightItem? = dao.getLightByNameLight(lightSelected.toString())
+
             if (roomSelected.isNullOrEmpty() || lightSelected.isNullOrEmpty() || onOff == null) {
                 Toast.makeText(requireContext(), "Please select all the information!", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
@@ -108,6 +113,7 @@ class setting : Fragment() {
             )
 
             if (success) {
+                sendCommand(lightItem!!.ip,lightItem.pin, if (state) "on" else "off", activeTime.toString(),2)
                 Toast.makeText(requireContext(), "Set timer successfully!", Toast.LENGTH_SHORT).show()
             } else {
                 Toast.makeText(requireContext(), "Failed to set timer!", Toast.LENGTH_SHORT).show()
@@ -146,6 +152,28 @@ class setting : Fragment() {
         loadRoomsToSpinner()
     }
 
+    private fun sendCommand(ip: String, pin: String, state: String, time: String?, mode: Int) {
+        if (ip.isBlank()) return
+        val encodedTime = time?.let { URLEncoder.encode(it, "UTF-8") } ?: ""
+        val url = if (mode == 1) {
+            URL("http://$ip/control?pin=$pin&state=$state&mode=now")
+        } else {
+            URL("http://$ip/control?pin=$pin&state=$state&time=$encodedTime&mode=schedule")
+        }
 
+        Thread {
+            try {
+                with(url.openConnection() as HttpURLConnection) {
+                    requestMethod = "GET"
+                    inputStream.bufferedReader().use {
+                        val response = it.readText()
+                        Log.d("ESP_RESPONSE", response)
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e("ESP_ERROR", "Failed to send command: ${e.message}")
+            }
+        }.start()
+    }
 
 }

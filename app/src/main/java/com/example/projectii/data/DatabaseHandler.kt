@@ -9,7 +9,7 @@ class DatabaseHandler(context: Context) : SQLiteOpenHelper(context, DB_NAME, nul
     companion object {
         // Thông tin Database
         const val DB_NAME = "Project-II-update"    // Tên database
-        const val DB_VERSION = 8                   // Phiên bản database
+        const val DB_VERSION = 9                   // Phiên bản database
 
         // Thông tin bảng tài khoản
         const val TABLE_ACCOUNT = "Account"
@@ -95,8 +95,8 @@ class DatabaseHandler(context: Context) : SQLiteOpenHelper(context, DB_NAME, nul
             CREATE TABLE IF NOT EXISTS $TABLE_SET_TIMER (
                 $COLUMN_USERNAME VARCHAR(50),
                 $COLUMN_NAME_LIGHT VARCHAR(100),
-                $COLUMN_SET_TIME DATETIME,
-                $COLUMN_ACTIVE_TIME DATETIME,
+                $COLUMN_SET_TIME TIME,
+                $COLUMN_ACTIVE_TIME TIME,
                 $COLUMN_TOGGLE_STATUS BOOLEAN,
                 PRIMARY KEY ($COLUMN_USERNAME, $COLUMN_NAME_LIGHT, $COLUMN_ACTIVE_TIME),
                 FOREIGN KEY ($COLUMN_USERNAME) REFERENCES $TABLE_ACCOUNT($COLUMN_USERNAME) ON DELETE CASCADE,

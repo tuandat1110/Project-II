@@ -9,7 +9,7 @@ import java.util.Date
 import java.util.Locale
 
 class UserDAO(context: Context) {
-    val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+    val timeFormat = SimpleDateFormat("hh:mm:ss a", Locale.getDefault())
     private val dbHelper = DatabaseHandler(context)
 
     fun insertUser(user: UserData): Boolean {
@@ -426,8 +426,8 @@ class UserDAO(context: Context) {
         val values = ContentValues().apply {
             put(DatabaseHandler.COLUMN_USERNAME, username)
             put(DatabaseHandler.COLUMN_NAME_LIGHT, nameRoom)
-            put(DatabaseHandler.COLUMN_SET_TIME, dateFormat.format(setTime))       // Format chuẩn ISO 8601
-            put(DatabaseHandler.COLUMN_ACTIVE_TIME, dateFormat.format(activeTime))
+            put(DatabaseHandler.COLUMN_SET_TIME, timeFormat.format(setTime))       // Format chuẩn ISO 8601
+            put(DatabaseHandler.COLUMN_ACTIVE_TIME, timeFormat.format(activeTime))
             put(DatabaseHandler.COLUMN_TOGGLE_STATUS, if (state) 1 else 0)          // SQLite không có kiểu BOOLEAN thực, nên dùng 0/1
         }
 
@@ -435,6 +435,39 @@ class UserDAO(context: Context) {
         db.close()
         return result != -1L
     }
+
+    fun getLightByNameLight(nameLight: String): LightItem? {
+        val db = dbHelper.readableDatabase
+        val cursor = db.query(
+            DatabaseHandler.TABLE_LIGHT_BULB,
+            arrayOf(
+                DatabaseHandler.COLUMN_NAME_LIGHT,
+                DatabaseHandler.COLUMN_PIN,
+                DatabaseHandler.COLUMN_IP,
+                DatabaseHandler.COLUMN_STATUS
+            ),
+            "${DatabaseHandler.COLUMN_NAME_LIGHT} = ?", // WHERE name = ?
+            arrayOf(nameLight),
+            null,
+            null,
+            null
+        )
+
+        var light: LightItem? = null
+        if (cursor.moveToFirst()) {
+            val name = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHandler.COLUMN_NAME_LIGHT))
+            val pin = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHandler.COLUMN_PIN))
+            val ip = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHandler.COLUMN_IP))
+            val status = cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHandler.COLUMN_STATUS))
+
+            light = LightItem(name, pin, ip, status == 1)
+        }
+
+        cursor.close()
+        db.close()
+        return light
+    }
+
 
 
 
