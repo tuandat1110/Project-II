@@ -63,9 +63,9 @@ class LightAdapter(private val context: Context, private val lights: MutableList
         if (ip.isBlank()) return
         val encodedTime = time?.let { URLEncoder.encode(it, "UTF-8") } ?: ""
         val url = if (mode == 1) {
-            URL("http://$ip/control?pin=$pin&state=$state&mode=1")
+            URL("http://$ip/control?pin=$pin&state=$state&mode=$mode")
         } else {
-            URL("http://$ip/control?pin=$pin&state=$state&time=$encodedTime&mode=2")
+            URL("http://$ip/control?pin=$pin&state=$state&time=$encodedTime&mode=$mode")
         }
 
         Thread {
@@ -82,6 +82,7 @@ class LightAdapter(private val context: Context, private val lights: MutableList
             }
         }.start()
     }
+
 
     class ViewHolder {
         lateinit var switchLight: Switch

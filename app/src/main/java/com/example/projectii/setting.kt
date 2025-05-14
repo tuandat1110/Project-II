@@ -68,7 +68,7 @@ class setting : Fragment() {
         selectRoom.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
                 val selectedItem = parent.getItemAtPosition(position).toString()
-                Toast.makeText(requireContext(), "Bạn chọn: $selectedItem", Toast.LENGTH_SHORT).show()
+                //Toast.makeText(requireContext(), "Bạn chọn: $selectedItem", Toast.LENGTH_SHORT).show()
                 loadLightsToSpinner(selectedItem)
                 // Hoặc xử lý logic gì đó với selectedItem ở đây
             }
@@ -156,9 +156,9 @@ class setting : Fragment() {
         if (ip.isBlank()) return
         val encodedTime = time?.let { URLEncoder.encode(it, "UTF-8") } ?: ""
         val url = if (mode == 1) {
-            URL("http://$ip/control?pin=$pin&state=$state&mode=now")
+            URL("http://$ip/control?pin=$pin&state=$state&mode=$mode")
         } else {
-            URL("http://$ip/control?pin=$pin&state=$state&time=$encodedTime&mode=schedule")
+            URL("http://$ip/control?pin=$pin&state=$state&time=$encodedTime&mode=$mode")
         }
 
         Thread {
