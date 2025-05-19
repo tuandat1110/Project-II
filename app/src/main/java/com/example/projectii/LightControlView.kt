@@ -3,6 +3,7 @@ package com.example.projectii
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.Switch
@@ -17,6 +18,7 @@ class LightControlView @JvmOverloads constructor(
     //private val seekBarBrightness: SeekBar
     private val nameLight: TextView
     private val status: TextView
+    private val isMark: CheckBox
     private val icon: ImageView
 
     init {
@@ -25,6 +27,7 @@ class LightControlView @JvmOverloads constructor(
         icon = findViewById(R.id.icon)
         switchLight = findViewById(R.id.switchLight)
         //seekBarBrightness = findViewById(R.id.seekBarBrightness)
+        isMark = findViewById(R.id.checkBox)
         nameLight = findViewById(R.id.nameLight)
         status = findViewById(R.id.status)  //  Thêm vào tránh lỗi UninitializedPropertyAccessException
     }
@@ -34,6 +37,7 @@ class LightControlView @JvmOverloads constructor(
         nameLight.text = lightItem.name
         switchLight.isChecked = lightItem.status
         //seekBarBrightness.progress = lightItem.brightness
+        isMark.isChecked = lightItem.isMarked
         status.text = if (lightItem.status) "ON" else "OFF"
 
         //  Ngăn chặn vòng lặp khi cập nhật UI

@@ -7,6 +7,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.ListView
 import android.widget.TextView
@@ -20,6 +21,7 @@ class DetailRoom : AppCompatActivity() {
     lateinit var addButton: Button
     lateinit var lightItems: MutableList<LightItem>
     lateinit var adapter: LightAdapter
+    lateinit var toggleButton: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,6 +31,7 @@ class DetailRoom : AppCompatActivity() {
         var lightListView = findViewById<ListView>(R.id.listView)
         backButton = findViewById(R.id.buttonBack)
         addButton = findViewById(R.id.add)
+        toggleButton = findViewById(R.id.toggle)
 
         val name = intent.getStringExtra("roomName")
         val count = intent.getIntExtra("lightCount", 0)
@@ -95,7 +98,7 @@ class DetailRoom : AppCompatActivity() {
                         return@setOnClickListener
                     }
 
-                    val light = LightItem(ten, pin, ip, status == 1)
+                    val light = LightItem(ten, pin, false,ip, status == 1)
 
                     if (userdao.insertLight(name.toString(), light)) {
                         Toast.makeText(this, "Light added successfully!", Toast.LENGTH_SHORT).show()
@@ -124,9 +127,9 @@ class DetailRoom : AppCompatActivity() {
             val edtTen = dialogView.findViewById<TextView>(R.id.edtTenDen)
             val edtPin = dialogView.findViewById<EditText>(R.id.edtPin)
             val edtIP = dialogView.findViewById<EditText>(R.id.edtIP)
+            //val checkBox = dialogView.findViewById<CheckBox>(R.id.checkBox)
             val btnUpdate = dialogView.findViewById<Button>(R.id.button_update_light)
             val btnDelete = dialogView.findViewById<Button>(R.id.button_delete_light)
-
 
             val selectedLight = lightItems[position]
             val lightName = selectedLight.name
@@ -206,8 +209,8 @@ class DetailRoom : AppCompatActivity() {
 
         adapter = LightAdapter(this,lightItems,name.toString())
         lightListView.adapter = adapter
-
-
-
+        toggleButton.setOnClickListener {
+            adapter.toggleAllSwitches()
+        }
     }
 }

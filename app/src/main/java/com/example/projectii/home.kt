@@ -71,19 +71,15 @@ class home : Fragment() {
 
         val roomListView = view.findViewById<ListView>(R.id.listView)
         val addButton = view.findViewById<Button>(R.id.add)
+        val username = arguments?.getString("username") ?: ""
         val email1 = arguments?.getString("email") ?: ""  // email lấy từ khi đăng nhập
         var userdao = UserDAO(requireContext())
-        val username: String = userdao.getUsernameByEmail(email1).toString()
+        //val username: String = userdao.getUsernameByEmail(email1).toString()
 
         detailRoomLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 val data = result.data
                 val returnedLightCount = data?.getIntExtra("lightCount", 0) ?: 0
-
-                // Cập nhật lại số lượng bóng đèn cho phòng tương ứng
-                selectedItem?.let {
-                    it.numberOfLights = returnedLightCount  // Cập nhật số lượng bóng đèn cho phòng
-                }
 
                 // Cập nhật lại danh sách room từ database
                 val updatedRooms = userdao.getRoomsByUsername(username)
@@ -111,7 +107,7 @@ class home : Fragment() {
                         Toast.makeText(requireContext(), "Please enter the correct information!", Toast.LENGTH_SHORT).show()
                     } else {
                         // Thêm vào DB trong background thread
-                        if(userdao.insertRoom(username, RoomItem(ten, 0))){
+                        if(userdao.insertRoom(username, RoomItem(ten))){
                             Toast.makeText(requireContext(),"Add room successfully!",Toast.LENGTH_SHORT).show()
                             val updatedList = userdao.getRoomsByUsername(username)
                             roomItems.clear()
@@ -135,7 +131,6 @@ class home : Fragment() {
             if (selectedItem != null) {
                 val intent = Intent(requireContext(), DetailRoom::class.java)
                 intent.putExtra("roomName", selectedItem?.name)
-                intent.putExtra("lightCount", selectedItem?.numberOfLights ?: 0)  // Truyền lightCount nếu cần
                 detailRoomLauncher.launch(intent)  // Sử dụng launcher để mở DetailRoom Activity
             } else {
                 Log.e("Error", "Selected room item is null")

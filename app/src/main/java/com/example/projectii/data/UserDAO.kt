@@ -110,8 +110,8 @@ class UserDAO(context: Context) {
         return try {
             db.execSQL(
                 "INSERT INTO ${DatabaseHandler.TABLE_ROOM} " +
-                        "(${DatabaseHandler.COLUMN_ROOM_NAME}, ${DatabaseHandler.COLUMN_NUMBER_OF_LIGHTS}) " +
-                        "VALUES ('${room.name}', ${room.numberOfLights})"
+                        "(${DatabaseHandler.COLUMN_ROOM_NAME}) " +
+                        "VALUES ('${room.name}')"
             )
 
 
@@ -130,16 +130,6 @@ class UserDAO(context: Context) {
         }
     }
 
-
-    fun insertSampleRooms() {
-        val db = dbHelper.writableDatabase
-        db.execSQL("INSERT INTO ${DatabaseHandler.TABLE_ROOM} (${DatabaseHandler.COLUMN_ROOM_NAME}) VALUES ('Living Room', 3)")
-        db.execSQL("INSERT INTO ${DatabaseHandler.TABLE_ROOM} (${DatabaseHandler.COLUMN_ROOM_NAME}) VALUES ('Bedroom', 2)")
-        db.execSQL("INSERT INTO ${DatabaseHandler.TABLE_ROOM} (${DatabaseHandler.COLUMN_ROOM_NAME}) VALUES ('Kitchen', 4)")
-        db.execSQL("INSERT INTO ${DatabaseHandler.TABLE_ROOM} (${DatabaseHandler.COLUMN_ROOM_NAME}) VALUES ('Bathroom', 1)")
-        db.execSQL("INSERT INTO ${DatabaseHandler.TABLE_ROOM} (${DatabaseHandler.COLUMN_ROOM_NAME}) VALUES ('Garage', 2)")
-        db.close()
-    }
 
     fun checkUser(email: String): Boolean {
         val db = dbHelper.readableDatabase
@@ -220,6 +210,7 @@ class UserDAO(context: Context) {
         return user
     }
 
+
     fun getUsernameByEmail(email: String): String? {
         val db = dbHelper.readableDatabase
         val cursor = db.rawQuery(
@@ -265,11 +256,9 @@ class UserDAO(context: Context) {
         val db = dbHelper.readableDatabase
 
         val query = """
-        SELECT r.${DatabaseHandler.COLUMN_ROOM_NAME}, r.${DatabaseHandler.COLUMN_NUMBER_OF_LIGHTS}
-        FROM ${DatabaseHandler.TABLE_ROOM} r
-        INNER JOIN ${DatabaseHandler.TABLE_ACCOUNT_ROOM} ar
-        ON r.${DatabaseHandler.COLUMN_ROOM_NAME} = ar.${DatabaseHandler.COLUMN_ROOM_NAME}
-        WHERE ar.${DatabaseHandler.COLUMN_USERNAME} = ?
+        SELECT r.${DatabaseHandler.COLUMN_ROOM_NAME}
+        FROM ${DatabaseHandler.TABLE_ACCOUNT_ROOM} r
+        WHERE r.${DatabaseHandler.COLUMN_USERNAME} = ?
     """
 
         val cursor = db.rawQuery(query, arrayOf(username))
@@ -277,8 +266,8 @@ class UserDAO(context: Context) {
         if (cursor.moveToFirst()) {
             do {
                 val roomName = cursor.getString(0)
-                val numberOfLights = cursor.getInt(1)
-                roomList.add(RoomItem(roomName,numberOfLights))
+                //val numberOfLights = cursor.getInt(1)
+                roomList.add(RoomItem(roomName))
             } while (cursor.moveToNext())
         }
 
@@ -291,7 +280,7 @@ class UserDAO(context: Context) {
         val lightList = mutableListOf<LightItem>()
         val db = dbHelper.readableDatabase
         val query = """
-        SELECT r.${DatabaseHandler.COLUMN_NAME_LIGHT}, r.${DatabaseHandler.COLUMN_PIN},r.${DatabaseHandler.COLUMN_IP},r.${DatabaseHandler.COLUMN_STATUS}
+        SELECT r.${DatabaseHandler.COLUMN_NAME_LIGHT}, r.${DatabaseHandler.COLUMN_PIN},r.${DatabaseHandler.COLUMN_ISMARKED},r.${DatabaseHandler.COLUMN_IP},r.${DatabaseHandler.COLUMN_STATUS}
         FROM ${DatabaseHandler.TABLE_LIGHT_BULB} r
         WHERE r.${DatabaseHandler.COLUMN_ROOM_NAME} = ?
     """
@@ -302,9 +291,10 @@ class UserDAO(context: Context) {
             do {
                 val nameLight = cursor.getString(0)
                 val pin = cursor.getString(1)
-                val ip = cursor.getString(2)
-                val status = cursor.getInt(3) == 1
-                lightList.add(LightItem(nameLight, pin,ip, status))
+                val mark = cursor.getInt(2) == 1
+                val ip = cursor.getString(3)
+                val status = cursor.getInt(4) == 1
+                lightList.add(LightItem(nameLight, pin,mark,ip, status))
             } while (cursor.moveToNext())
         }
 
@@ -318,6 +308,7 @@ class UserDAO(context: Context) {
         val values = ContentValues().apply {
             put(DatabaseHandler.COLUMN_NAME_LIGHT, light.name)
             put(DatabaseHandler.COLUMN_PIN, light.pin)
+            put(DatabaseHandler.COLUMN_ISMARKED,light.isMarked)
             put(DatabaseHandler.COLUMN_IP, light.ip)
             put(DatabaseHandler.COLUMN_STATUS, if (light.status) 1 else 0)
             put(DatabaseHandler.COLUMN_ROOM_NAME, name)
@@ -437,36 +428,62 @@ class UserDAO(context: Context) {
     }
 
     fun getLightByNameLight(nameLight: String): LightItem? {
+        if (nameLight.isBlank()) return null
+
         val db = dbHelper.readableDatabase
-        val cursor = db.query(
-            DatabaseHandler.TABLE_LIGHT_BULB,
-            arrayOf(
-                DatabaseHandler.COLUMN_NAME_LIGHT,
-                DatabaseHandler.COLUMN_PIN,
-                DatabaseHandler.COLUMN_IP,
-                DatabaseHandler.COLUMN_STATUS
-            ),
-            "${DatabaseHandler.COLUMN_NAME_LIGHT} = ?", // WHERE name = ?
-            arrayOf(nameLight),
-            null,
-            null,
-            null
-        )
+        val light: LightItem?
 
-        var light: LightItem? = null
-        if (cursor.moveToFirst()) {
-            val name = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHandler.COLUMN_NAME_LIGHT))
-            val pin = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHandler.COLUMN_PIN))
-            val ip = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHandler.COLUMN_IP))
-            val status = cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHandler.COLUMN_STATUS))
+        db.use { database ->
+            val cursor = database.query(
+                DatabaseHandler.TABLE_LIGHT_BULB,
+                arrayOf(
+                    DatabaseHandler.COLUMN_NAME_LIGHT,
+                    DatabaseHandler.COLUMN_PIN,
+                    DatabaseHandler.COLUMN_ISMARKED,
+                    DatabaseHandler.COLUMN_IP,
+                    DatabaseHandler.COLUMN_STATUS
+                ),
+                "${DatabaseHandler.COLUMN_NAME_LIGHT} = ?",
+                arrayOf(nameLight),
+                null,
+                null,
+                null
+            )
 
-            light = LightItem(name, pin, ip, status == 1)
+            light = cursor.use {
+                if (it.moveToFirst()) {
+                    val name = it.getString(it.getColumnIndexOrThrow(DatabaseHandler.COLUMN_NAME_LIGHT))
+                    val pin = it.getString(it.getColumnIndexOrThrow(DatabaseHandler.COLUMN_PIN))
+                    val mark = it.getInt(it.getColumnIndexOrThrow(DatabaseHandler.COLUMN_ISMARKED))
+                    val ip = it.getString(it.getColumnIndexOrThrow(DatabaseHandler.COLUMN_IP))
+                    val status = it.getInt(it.getColumnIndexOrThrow(DatabaseHandler.COLUMN_STATUS))
+                    LightItem(name, pin, mark == 1, ip, status == 1)
+                } else {
+                    null
+                }
+            }
         }
 
-        cursor.close()
-        db.close()
         return light
     }
+
+    fun updateMark(lightName: String, isMarked: Boolean): Boolean {
+        val db = dbHelper.writableDatabase
+        val contentValues = ContentValues().apply {
+            put(DatabaseHandler.COLUMN_ISMARKED, if (isMarked) 1 else 0) // true = 1, false = 0
+        }
+
+        val rowsAffected = db.update(
+            DatabaseHandler.TABLE_LIGHT_BULB,
+            contentValues,
+            "${DatabaseHandler.COLUMN_NAME_LIGHT} = ?",
+            arrayOf(lightName)
+        )
+
+        db.close()
+        return rowsAffected > 0
+    }
+
 
 
 

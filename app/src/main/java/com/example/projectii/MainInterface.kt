@@ -17,35 +17,38 @@ class MainInterface : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainInterfaceBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
         val email = intent.getStringExtra("email") ?: ""
+        val username = intent.getStringExtra("username") ?: ""
 
         viewPager = binding.viewPager
         bottomNavigationView = binding.bottomNavigationView
 
-        // Thiết lập ViewPager2 với FragmentStateAdapter
-        val pagerAdapter = ViewPagerAdapter(this, email)
+        // Sửa: truyền cả email và username
+        val pagerAdapter = ViewPagerAdapter(this, email, username)
         viewPager.adapter = pagerAdapter
 
-        // Đồng bộ ViewPager2 với BottomNavigationView
         bottomNavigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.home -> {
                     viewPager.currentItem = 0
                     true
                 }
+
                 R.id.profile -> {
                     viewPager.currentItem = 1
                     true
                 }
+
                 R.id.setting -> {
                     viewPager.currentItem = 2
                     true
                 }
+
                 else -> false
             }
         }
 
-        // Khi ViewPager2 thay đổi trang, cập nhật BottomNavigationView
         viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
@@ -53,24 +56,27 @@ class MainInterface : AppCompatActivity() {
             }
         })
 
-        // Mặc định hiển thị tab Home
         viewPager.currentItem = 0
     }
 
     override fun onResume() {
         super.onResume()
-        binding.viewPager.currentItem = 0 // ép về lại Home tab
+        binding.viewPager.currentItem = 0
     }
-
 }
 
-// Adapter cho ViewPager2
-class ViewPagerAdapter(activity: AppCompatActivity, private val email: String) : FragmentStateAdapter(activity) {
+class ViewPagerAdapter(
+    activity: AppCompatActivity,
+    private val email: String,
+    private val username: String    // ← bạn cần thêm `private val` để dùng được trong class
+) : FragmentStateAdapter(activity) {
+
     override fun getItemCount(): Int = 3
 
     override fun createFragment(position: Int): Fragment {
         val bundle = Bundle().apply {
             putString("email", email)
+            putString("username", username)  // ← thêm dòng này để truyền username
         }
 
         return when (position) {
@@ -81,3 +87,4 @@ class ViewPagerAdapter(activity: AppCompatActivity, private val email: String) :
         }
     }
 }
+

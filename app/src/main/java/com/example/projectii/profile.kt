@@ -57,7 +57,9 @@ class profile : Fragment() {
         address = view.findViewById(R.id.address)
         logout_btn.setOnClickListener {
             val intent = Intent(requireContext(), MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
+            Toast.makeText(requireContext(),"Logged out successfully",Toast.LENGTH_SHORT).show()
         }
 
         val user = dao.getUserByEmail(email1)

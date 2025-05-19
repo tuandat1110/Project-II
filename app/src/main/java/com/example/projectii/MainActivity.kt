@@ -51,7 +51,9 @@ class MainActivity : AppCompatActivity() {
                     if (user != null) {
                         Toast.makeText(this, "Login successful!", Toast.LENGTH_SHORT).show()
                         val intent = Intent(this, MainInterface::class.java)
+                        intent.putExtra("username",username)
                         intent.putExtra("email", user.email)  // truyền dữ liệu sang MainInterface
+                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                         startActivity(intent)
                     } else {
                         Toast.makeText(this, "User not found in database!", Toast.LENGTH_SHORT).show()

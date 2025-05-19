@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
+import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.Switch
 import android.widget.TextView
@@ -33,6 +34,7 @@ class LightAdapter(private val context: Context, private val lights: MutableList
                 switchLight = item.findViewById(R.id.switchLight)
                 nameLight = item.findViewById(R.id.nameLight)
                 status = item.findViewById(R.id.status)
+                checkBox = item.findViewById(R.id.checkBox)
             }
             item.tag = viewHolder
         } else {
@@ -45,6 +47,8 @@ class LightAdapter(private val context: Context, private val lights: MutableList
         viewHolder.nameLight.text = light.name
         viewHolder.switchLight.setOnCheckedChangeListener(null)
         viewHolder.switchLight.isChecked = light.status
+        viewHolder.checkBox.isChecked = light.isMarked
+        viewHolder.switchLight.jumpDrawablesToCurrentState() // Optional cho hiệu ứng mượt
         viewHolder.status.text = if (light.status) "ON" else "OFF"
 
         viewHolder.switchLight.setOnCheckedChangeListener { _, isChecked ->
@@ -56,8 +60,27 @@ class LightAdapter(private val context: Context, private val lights: MutableList
             }
         }
 
+        viewHolder.checkBox.setOnClickListener {
+            val isChecked = viewHolder.checkBox.isChecked
+            light.isMarked = isChecked
+
+            UserDAO(context).updateMark(light.name,isChecked)
+        }
         return item
     }
+
+    fun toggleAllSwitches() {
+        for (light in lights) {
+            if(light.isMarked){
+                light.status = !light.status // đảo trạng thái
+                sendCommand(light.ip, light.pin, if (light.status) "on" else "off", null, 1)
+                UserDAO(context).updateState(light.name, light.status)
+            }
+
+        }
+        notifyDataSetChanged()
+    }
+
 
     private fun sendCommand(ip: String, pin: String, state: String, time: String?, mode: Int) {
         if (ip.isBlank()) return
@@ -83,11 +106,11 @@ class LightAdapter(private val context: Context, private val lights: MutableList
         }.start()
     }
 
-
     class ViewHolder {
         lateinit var switchLight: Switch
         lateinit var nameLight: TextView
         lateinit var status: TextView
         lateinit var icon: ImageView
+        lateinit var checkBox: CheckBox
     }
 }

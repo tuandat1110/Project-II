@@ -9,7 +9,7 @@ class DatabaseHandler(context: Context) : SQLiteOpenHelper(context, DB_NAME, nul
     companion object {
         // Thông tin Database
         const val DB_NAME = "Project-II-update"    // Tên database
-        const val DB_VERSION = 9                   // Phiên bản database
+        const val DB_VERSION = 14                  // Phiên bản database
 
         // Thông tin bảng tài khoản
         const val TABLE_ACCOUNT = "Account"
@@ -31,6 +31,7 @@ class DatabaseHandler(context: Context) : SQLiteOpenHelper(context, DB_NAME, nul
         //const val COLUMN_BRIGHTNESS = "Brightness"
         const val COLUMN_STATUS = "Status"
         const val COLUMN_IP = "IP"
+        const val COLUMN_ISMARKED = "IsMarked"
 
         // Thông tin bảng set timer
         const val TABLE_SET_TIMER = "SetTimer"
@@ -72,8 +73,8 @@ class DatabaseHandler(context: Context) : SQLiteOpenHelper(context, DB_NAME, nul
         // 3. Tạo bảng Room
         val sqlRoom = """
             CREATE TABLE IF NOT EXISTS $TABLE_ROOM (
-                $COLUMN_ROOM_NAME VARCHAR(100) PRIMARY KEY,
-                $COLUMN_NUMBER_OF_LIGHTS INTEGER
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                $COLUMN_ROOM_NAME VARCHAR(100)
             );
         """.trimIndent()
 
@@ -85,6 +86,7 @@ class DatabaseHandler(context: Context) : SQLiteOpenHelper(context, DB_NAME, nul
                 $COLUMN_IP VARCHAR(40),
                 $COLUMN_STATUS BOOLEAN,
                 $COLUMN_ROOM_NAME VARCHAR(100),
+                $COLUMN_ISMARKED BOOLEAN,
                 PRIMARY KEY ($COLUMN_NAME_LIGHT, $COLUMN_ROOM_NAME),
                 FOREIGN KEY ($COLUMN_ROOM_NAME) REFERENCES $TABLE_ROOM($COLUMN_ROOM_NAME) ON DELETE CASCADE
             );
@@ -93,16 +95,17 @@ class DatabaseHandler(context: Context) : SQLiteOpenHelper(context, DB_NAME, nul
         // 5. Tạo bảng SetTimer, tham chiếu đến Account và LightBulb
         val sqlSetTimer = """
             CREATE TABLE IF NOT EXISTS $TABLE_SET_TIMER (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
                 $COLUMN_USERNAME VARCHAR(50),
                 $COLUMN_NAME_LIGHT VARCHAR(100),
                 $COLUMN_SET_TIME TIME,
                 $COLUMN_ACTIVE_TIME TIME,
                 $COLUMN_TOGGLE_STATUS BOOLEAN,
-                PRIMARY KEY ($COLUMN_USERNAME, $COLUMN_NAME_LIGHT, $COLUMN_ACTIVE_TIME),
                 FOREIGN KEY ($COLUMN_USERNAME) REFERENCES $TABLE_ACCOUNT($COLUMN_USERNAME) ON DELETE CASCADE,
                 FOREIGN KEY ($COLUMN_NAME_LIGHT) REFERENCES $TABLE_LIGHT_BULB($COLUMN_NAME_LIGHT) ON DELETE CASCADE
             );
         """.trimIndent()
+
 
         // 6. Tạo bảng AccountRoom, tham chiếu đến Account và Room
         val sqlAccountRoom = """
